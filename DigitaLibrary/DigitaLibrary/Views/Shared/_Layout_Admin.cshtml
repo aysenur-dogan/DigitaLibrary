@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - Admin</title>
+
+    <link href="~/admin/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <link href="~/admin/css/sb-admin-2.min.css" rel="stylesheet" />
+</head>
+<body id="page-top">
+    <div id="wrapper">
+
+        <partial name="_Sidebar_Admin" />
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <partial name="_Topbar_Admin" />
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+
+            <partial name="_Footer_Admin" />
+        </div>
+    </div>
+
+    <script src="~/admin/vendor/jquery/jquery.min.js"></script>
+    <script src="~/admin/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="~/admin/js/sb-admin-2.min.js"></script>
+    @RenderSection("Scripts", false)
+</body>
+</html>

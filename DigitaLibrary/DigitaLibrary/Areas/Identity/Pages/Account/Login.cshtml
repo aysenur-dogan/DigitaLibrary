@@ -1,0 +1,71 @@
+﻿@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Giriş Yap";
+    Layout = "/Views/Shared/_Layout.cshtml";  // _ViewStart kullanıyorsan bu satır opsiyonel
+}
+
+<div class="auth-wrap">
+    <div class="card-auth bg-white" style="max-width: 540px;">
+        <div class="p-4 p-md-5">
+
+            <div class="mb-4 text-center">
+                <h1 class="h-title h3 mb-1">Hoş Geldiniz!</h1>
+                <div class="h-sub small">Devam etmek için giriş yapın</div>
+            </div>
+
+            <form id="account" method="post" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label">E‑posta</label>
+                    <div class="input-icon">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Input.Email" autocomplete="username" placeholder="ornek@site.com" />
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Input.Password" class="form-label">Şifre</label>
+                    <div class="input-icon">
+                        <i class="bi bi-lock"></i>
+                        <input asp-for="Input.Password" autocomplete="current-password" placeholder="••••••••" />
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" asp-for="Input.RememberMe" />
+                        <label class="form-check-label" asp-for="Input.RememberMe">Beni hatırla</label>
+                    </div>
+                    @if ((Model.ExternalLogins?.Count ?? 0) > 0)
+                    {
+                        <a class="link-soft small" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl">
+                            Diğer giriş seçenekleri
+                        </a>
+                    }
+                </div>
+
+                <button id="login-submit" type="submit" class="btn-gradient w-100 mb-3">
+                    Giriş Yap
+                </button>
+
+                <hr class="hr-soft my-3" />
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                    <a id="forgot-password" asp-page="./ForgotPassword" class="link-soft">Şifrenizi mi unuttunuz?</a>
+                    <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="link-soft">
+                        Hesabınız yok mu? Kayıt olun!
+                    </a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

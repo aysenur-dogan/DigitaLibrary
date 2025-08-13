@@ -1,0 +1,65 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Kayıt Ol";
+    Layout = "/Views/Shared/_Layout.cshtml";  // _ViewStart kullanıyorsan bu satır opsiyonel
+}
+
+<div class="auth-wrap">
+    <div class="card-auth bg-white" style="max-width: 540px;">
+        <div class="p-4 p-md-5">
+
+            <div class="mb-4 text-center">
+                <h1 class="h-title h3 mb-1">Hesap Oluştur</h1>
+                <div class="h-sub small">Kısa bir adımda aramıza katılın</div>
+            </div>
+
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="needs-validation" novalidate>
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Email" class="form-label">E‑posta</label>
+                    <div class="input-icon">
+                        <i class="bi bi-envelope"></i>
+                        <input asp-for="Input.Email" autocomplete="username" placeholder="ornek@site.com" />
+                    </div>
+                    <span asp-validation-for="Input.Email" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Input.Password" class="form-label">Şifre</label>
+                    <div class="input-icon">
+                        <i class="bi bi-lock"></i>
+                        <input asp-for="Input.Password" autocomplete="new-password" placeholder="••••••••" />
+                    </div>
+                    <span asp-validation-for="Input.Password" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-2">
+                    <label asp-for="Input.ConfirmPassword" class="form-label">Şifre (Tekrar)</label>
+                    <div class="input-icon">
+                        <i class="bi bi-shield-check"></i>
+                        <input asp-for="Input.ConfirmPassword" autocomplete="new-password" placeholder="••••••••" />
+                    </div>
+                    <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
+                </div>
+
+                <button id="registerSubmit" type="submit" class="btn-gradient w-100 mb-3">
+                    Kayıt Ol
+                </button>
+
+                <hr class="hr-soft my-3" />
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
+                    <a class="link-soft" asp-area="Identity" asp-page="/Account/Login">Zaten hesabınız var mı? Giriş yapın</a>
+                    <a class="link-soft" asp-controller="Home" asp-action="Index">Ana sayfaya dön</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

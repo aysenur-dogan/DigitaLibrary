@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "wPYkvVBldKY=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ayşenur doğan\\source\\repos\\DigitaLibrary\\DigitaLibrary\\HashGen\\HashGen.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ayşenur doğan\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
