@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace YourNamespaceHere.Models // Burada kendi proje namespace'ini kullan
+namespace DigitaLibrary.Models
 {
     public class Admin : IdentityUser
     {

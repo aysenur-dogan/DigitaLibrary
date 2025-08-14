@@ -29,32 +29,36 @@
     @RenderSection("Styles", required: false)
 </head>
 <body>
+    @if (!(ViewData["Title"]?.ToString() == "Ana Sayfa"))
+    {
 
-    <!-- Navbar (isteğe bağlı) -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
-            <div class="container">
-                <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">MyApp</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
-                        </li>
-                    </ul>
+
+        <!-- Navbar (isteğe bağlı) -->
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">DIGILIBRARY📝</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-auto">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-
+            </nav>
+        </header>
+    }
     <!-- Ana içerik -->
     <main>
         @RenderBody()

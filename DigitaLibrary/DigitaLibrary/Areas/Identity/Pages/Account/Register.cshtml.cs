@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using YourNamespaceHere.Models;
+using DigitaLibrary.Models;
 
 namespace DigitaLibrary.Areas.Identity.Pages.Account
 {

@@ -1,5 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using YourNamespaceHere.Models
+@using DigitaLibrary.Models
+@inject SignInManager<Admin> SignInManager
+@inject UserManager<Admin> UserManager
+
 
 @inject SignInManager<Admin> SignInManager
 @inject UserManager<Admin> UserManager

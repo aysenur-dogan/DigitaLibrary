@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using YourNamespaceHere.Data;      // AppDbContext için
-using YourNamespaceHere.Models;    // Admin için
+using DigitaLibrary.Data;      // AppDbContext için
+using DigitaLibrary.Models;    // Admin için
 
 var builder = WebApplication.CreateBuilder(args);
 
