@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// *** Sadece BİR Identity kaydı: ROLLERLE ***
+// Identity ayarları
 builder.Services.AddIdentity<Admin, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = true;
@@ -19,8 +19,9 @@ builder.Services.AddIdentity<Admin, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders()
-.AddDefaultUI(); // Default UI (RCL)
+.AddDefaultUI(); // Default Identity UI (Razor Class Library)
 
+// Cookie ayarları
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
@@ -46,9 +47,32 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Varsayılan route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+// Eski Identity profil URL'lerini tek sayfaya yönlendir
+app.MapGet("/Identity/Account/Manage", ctx => {
+    ctx.Response.Redirect("/Profile/Me", permanent: true);
+    return Task.CompletedTask;
+});
+app.MapGet("/Identity/Account/Manage/Index", ctx => {
+    ctx.Response.Redirect("/Profile/Me", permanent: true);
+    return Task.CompletedTask;
+});
+// Alt sayfalar (Email, Password vs.) dahil
+app.MapGet("/Identity/Account/Manage/{**_}", ctx => {
+    ctx.Response.Redirect("/Profile/Me", permanent: true);
+    return Task.CompletedTask;
+});
+
+// ✅ Identity'nin kendi profil sayfasını (/Identity/Account/Manage/Index) Profile/Me sayfasına yönlendir
+app.MapGet("/Identity/Account/Manage/Index", context =>
+{
+    context.Response.Redirect("/Profile/Me");
+    return Task.CompletedTask;
+});
+
 app.Run();

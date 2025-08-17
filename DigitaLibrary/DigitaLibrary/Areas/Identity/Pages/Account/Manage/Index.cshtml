@@ -1,0 +1,76 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profilim";
+}
+
+@section Styles {
+    <style>
+        .profile-header {
+            background: linear-gradient(90deg, #6a11cb, #2575fc);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            position: absolute;
+            bottom: -60px;
+            left: 20px;
+        }
+
+        .profile-info {
+            margin-left: 160px;
+            padding-top: 10px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+}
+
+<div class="container">
+    <!-- Profil Başlık -->
+    <div class="profile-header">
+        <img src="~/img/avatar-placeholder.png" class="profile-avatar" alt="Avatar" />
+        <div class="profile-info">
+            <h3>@Model.Username</h3>
+            <p class="mb-0">@Model.Input.Email</p>
+        </div>
+    </div>
+
+    <div class="row mt-5 g-4">
+        <!-- Kullanıcı Bilgileri -->
+        <div class="col-lg-5">
+            <div class="glass-card">
+                <h5 class="mb-3">Kullanıcı Bilgileri</h5>
+                <p><strong>Kullanıcı Adı:</strong> @Model.Username</p>
+                <p><strong>E-posta:</strong> @Model.Input.Email</p>
+                <p><strong>Telefon:</strong> @Model.Input.PhoneNumber</p>
+            </div>
+        </div>
+
+        <!-- Paylaşımlarım -->
+        <div class="col-lg-7">
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Paylaşımlarım</h5>
+                    <a asp-controller="Posts" asp-action="Create" class="btn btn-primary btn-sm">Makale Ekle</a>
+                </div>
+                <p class="text-muted">Henüz paylaşım yok.</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -121,3 +121,52 @@ body {
 .hr-soft {
     border-top: 1px solid rgba(15,23,42,.08);
 }
+:root {
+    --grad-start: #6a11cb; /* login'de kullandığın gradient başlangıcı */
+    --grad-end: #2575fc; /* login'de kullandığın gradient bitişi */
+    --glass-bg: rgba(255,255,255,0.65);
+}
+
+.profile-hero {
+    background: linear-gradient(90deg, var(--grad-start), var(--grad-end));
+    height: 200px;
+    border-radius: 1.25rem;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #fff;
+    position: absolute;
+    left: 24px;
+    bottom: -60px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+
+.profile-actions {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    display: flex;
+    gap: 10px;
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
+
+@media (max-width:576px) {
+    .profile-avatar {
+        width: 90px;
+        height: 90px;
+        bottom: -45px;
+        left: 12px;
+    }
+}

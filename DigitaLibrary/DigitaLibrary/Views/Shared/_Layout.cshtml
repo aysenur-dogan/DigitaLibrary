@@ -1,10 +1,4 @@
-﻿@*
-    Genel layout
-    - Bootstrap + Icons
-    - Google Fonts (Inter)
-    - app.css özel stiller
-    - RenderBody() zorunlu
-*@
+﻿@* Views/Shared/_Layout.cshtml *@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -12,69 +6,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] - MyApp</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-
-    <!-- Özel app.css -->
     <link rel="stylesheet" href="~/css/app.css" />
 
     @RenderSection("Styles", required: false)
 </head>
+
 <body>
-    @if (!(ViewData["Title"]?.ToString() == "Ana Sayfa"))
-    {
+    <header class="main-navbar py-2">
+        <div class="container">
+            <div class="d-flex align-items-center gap-3 glass-nav px-3 py-2">
+
+                <!-- Logo (Ana sayfaya linkli) -->
+                <a asp-controller="Home" asp-action="Index" class="fw-bold me-2 text-decoration-none" style="font-size:18px;">
+                    <span style="color:#2563eb;">DIGI</span><span style="color:#8b5cf6;">Library</span> 📝
+                </a>
+
+                <!-- Ana Sayfa butonu -->
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
+                    Ana Sayfa
+                </a>
+
+                <!-- Search -->
+                <form id="searchForm" asp-controller="Search" asp-action="Index" method="get"
+                      class="flex-grow-1 position-relative">
+                    <i class="bi bi-search search-icon"></i>
+                    <input name="q" class="form-control search-input" placeholder="Ara: başlık, etiket, yazar..." />
+                </form>
+
+                <!-- Ara butonu -->
+                <button type="submit" form="searchForm" class="btn btn-gradient">Ara</button>
+
+                <!-- Küçük ikon butonları -->
+                <a asp-controller="Library" asp-action="Grid" class="circle-btn" title="Kategoriler">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </a>
+                <a asp-controller="Favorites" asp-action="Index" class="circle-btn" title="Favoriler">
+                    <i class="bi bi-heart"></i>
+                </a>
+                <a asp-controller="Profile" asp-action="Me" class="circle-btn" title="Profil">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a asp-controller="Bookmarks" asp-action="Index" class="circle-btn" title="Kaydedilenler">
+                    <i class="bi bi-bookmark"></i>
+                </a>
+
+                <!-- Giriş / Çıkış -->
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="d-inline ms-1">
+                        <button class="btn btn-outline-secondary">Çıkış Yap</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary ms-1">Giriş</a>
+                }
+            </div>
+        </div>
+    </header>
 
 
-        <!-- Navbar (isteğe bağlı) -->
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom shadow-sm">
-                <div class="container">
-                    <a class="navbar-brand fw-bold" asp-area="" asp-controller="Home" asp-action="Index">DIGILIBRARY📝</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
 
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Giriş Yap</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
-    }
-    <!-- Ana içerik -->
-    <main>
-        @RenderBody()
+    <main class="py-4">
+        <div class="container">
+            @RenderBody()
+        </div>
     </main>
 
-    <!-- Footer -->
     <footer class="border-top py-3 mt-5">
         <div class="container text-center text-muted small">
             © @DateTime.Now.Year — MyApp
         </div>
     </footer>
 
-    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @RenderSection("Scripts", required: false)
-
 </body>
 </html>
