@@ -2,6 +2,7 @@ wwwroot\css\app.css
 wwwroot\css\sb-admin-2.css
 wwwroot\css\sb-admin-2.min.css
 wwwroot\favicon.ico
+wwwroot\images\defaults\avatar.png
 wwwroot\img\undraw_posting_photo.svg
 wwwroot\img\undraw_profile.svg
 wwwroot\img\undraw_profile_1.svg
@@ -94,6 +95,9 @@ wwwroot\scss\_mixins.scss
 wwwroot\scss\_navs.scss
 wwwroot\scss\_utilities.scss
 wwwroot\scss\_variables.scss
+wwwroot\uploads\users\b832aff6-b928-4467-93f3-3f298a5fc50d\avatars\a50de2fcad8b4ca5866744761042450a.png
+wwwroot\uploads\users\b832aff6-b928-4467-93f3-3f298a5fc50d\covers\52ef7afca9bf4f6e8800f1198018e0f0.png
+wwwroot\uploads\users\b832aff6-b928-4467-93f3-3f298a5fc50d\covers\e3914a2ec81a47c5b81ef79afe9ecf04.png
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.js
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.js.map
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.min.js

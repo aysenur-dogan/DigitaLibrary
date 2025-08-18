@@ -1,0 +1,53 @@
+﻿@model DigitaLibrary.ViewModels.ProfileEditViewModel
+@{
+    ViewData["Title"] = "Profil Düzenle";
+}
+
+<h2>Profil Düzenle</h2>
+
+<form asp-action="Edit" asp-controller="Profile" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="DisplayName" class="form-label"></label>
+        <input asp-for="DisplayName" class="form-control" />
+        <span asp-validation-for="DisplayName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Mevcut Profil Fotoğrafı</label><br />
+        <img src="@(string.IsNullOrWhiteSpace(Model.AvatarPath) ? "/images/defaults/avatar.png" : Model.AvatarPath)"
+             alt="Avatar" style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:1px solid #ddd;" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="AvatarFile" class="form-label"></label>
+        <input asp-for="AvatarFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+        <span asp-validation-for="AvatarFile" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Mevcut Kapak Görseli</label><br />
+        <img src="@(string.IsNullOrWhiteSpace(Model.CoverPath) ? "/images/defaults/cover.png" : Model.CoverPath)"
+             alt="Cover" style="max-width:100%;height:auto;border:1px solid #eee;" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CoverFile" class="form-label"></label>
+        <input asp-for="CoverFile" type="file" class="form-control" accept=".jpg,.jpeg,.png,.webp" />
+        <span asp-validation-for="CoverFile" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Me" class="btn btn-outline-secondary">Vazgeç</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

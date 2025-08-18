@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DigitaLibrary.Models
+public class Admin : IdentityUser
 {
-    public class Admin : IdentityUser
-    {
-        public string? DisplayName { get; set; }
-        public string? AvatarPath { get; set; }
-    }
+    public string? DisplayName { get; set; }
+    public string? AvatarPath { get; set; }
+
+    [NotMapped]                 // ← EF bu alanı tabloya beklemez
+    public string? CoverPath { get; set; }
 }

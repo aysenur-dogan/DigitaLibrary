@@ -9,6 +9,7 @@ C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\De
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.AssemblyInfoInputs.cache
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.AssemblyInfo.cs
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.csproj.CoreCompileInputs.cache
+C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.sourcelink.json
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.csproj.Up2Date
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\HashGen.dll
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\HashGen\obj\Debug\net8.0\refint\HashGen.dll

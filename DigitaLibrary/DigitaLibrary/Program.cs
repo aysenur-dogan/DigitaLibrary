@@ -19,7 +19,7 @@ builder.Services.AddIdentity<Admin, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders()
-.AddDefaultUI(); // Default Identity UI (Razor Class Library)
+.AddDefaultUI();
 
 // Cookie ayarları
 builder.Services.ConfigureApplicationCookie(options =>
@@ -53,7 +53,8 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-// Eski Identity profil URL'lerini tek sayfaya yönlendir
+
+// Eski Identity profil URL'lerini Profile/Me sayfasına yönlendir
 app.MapGet("/Identity/Account/Manage", ctx => {
     ctx.Response.Redirect("/Profile/Me", permanent: true);
     return Task.CompletedTask;
@@ -62,17 +63,22 @@ app.MapGet("/Identity/Account/Manage/Index", ctx => {
     ctx.Response.Redirect("/Profile/Me", permanent: true);
     return Task.CompletedTask;
 });
-// Alt sayfalar (Email, Password vs.) dahil
 app.MapGet("/Identity/Account/Manage/{**_}", ctx => {
     ctx.Response.Redirect("/Profile/Me", permanent: true);
     return Task.CompletedTask;
 });
 
-// ✅ Identity'nin kendi profil sayfasını (/Identity/Account/Manage/Index) Profile/Me sayfasına yönlendir
-app.MapGet("/Identity/Account/Manage/Index", context =>
+// ✅ Migrationları otomatik uygula
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    db.Database.Migrate();
+//}
+
+app.MapGet("/_whoami", (DigitaLibrary.Data.AppDbContext db) =>
 {
-    context.Response.Redirect("/Profile/Me");
-    return Task.CompletedTask;
+    var cnn = db.Database.GetDbConnection();
+    return Results.Text($"DB: {cnn.Database}\nServer: {cnn.DataSource}\nConnStr: {cnn.ConnectionString}");
 });
 
 app.Run();
