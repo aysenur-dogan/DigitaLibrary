@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitaLibrary.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250818092842_Baseline")]
-    partial class Baseline
+    [Migration("20250818123350_biodb")]
+    partial class biodb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,6 +35,10 @@ namespace DigitaLibrary.Migrations
 
                     b.Property<string>("AvatarPath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()

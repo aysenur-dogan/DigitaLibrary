@@ -54,70 +54,121 @@ namespace DigitaLibrary.Controllers
             return View(vm);
         }
 
-        // === DÜZENLE (GET) ===
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
             var me = await _userManager.GetUserAsync(User);
             if (me == null) return RedirectToAction(nameof(Me));
 
+            // DisplayName'i basitçe ilk boşluğa göre bölüyoruz
+            var first = me.DisplayName;
+            var last = "";
+            if (!string.IsNullOrWhiteSpace(me.DisplayName))
+            {
+                var parts = me.DisplayName.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                first = parts.ElementAtOrDefault(0) ?? "";
+                last = parts.ElementAtOrDefault(1) ?? "";
+            }
+
             var vm = new ProfileEditViewModel
             {
-                DisplayName = string.IsNullOrWhiteSpace(me.DisplayName) ? me.UserName : me.DisplayName,
+                FirstName = first,
+                LastName = last,
+                UserName = me.UserName,
                 Email = me.Email,
                 AvatarPath = me.AvatarPath,
-                CoverPath = me.CoverPath
+                CoverPath = me.CoverPath,
+                Bio = me.Bio,
+                 EducationInfo = me.EducationInfo,
+                Interests = me.Interests
             };
             return View(vm);
         }
 
-        // === DÜZENLE (POST) + DOSYA YÜKLE ===
+        // === DÜZENLE (POST) ===
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProfileEditViewModel vm)
         {
+            Console.WriteLine($"[DEBUG] POST Education='{vm.EducationInfo}' Interests='{vm.Interests}'");
+
             var me = await _userManager.GetUserAsync(User);
             if (me == null) return RedirectToAction(nameof(Me));
 
-            me.DisplayName = vm.DisplayName?.Trim();
-            // E-postayı burada değiştirmek istemiyorsan bu satırı kaldır:
-            me.Email = vm.Email?.Trim() ?? me.Email;
+            // Basit doğrulamalar
+            if (string.IsNullOrWhiteSpace(vm.FirstName))
+                ModelState.AddModelError(nameof(vm.FirstName), "İsim gereklidir.");
 
-            // Avatar
-            if (vm.AvatarFile is { Length: > 0 })
-            {
-                if (!IsImage(vm.AvatarFile))
-                    ModelState.AddModelError(nameof(vm.AvatarFile), "jpg, png, webp veya gif (≤ 6 MB) yükleyin.");
-                else
-                {
-                    var path = await SaveImage(vm.AvatarFile, me.Id, "avatars");
-                    DeleteIfExists(me.AvatarPath);
-                    me.AvatarPath = path;
-                }
-            }
+            // Dosya doğrulamaları (mevcut yardımcılarınızı kullanıyoruz)
+            if (vm.AvatarFile is { Length: > 0 } && !IsImage(vm.AvatarFile))
+                ModelState.AddModelError(nameof(vm.AvatarFile), "jpg, png, webp veya gif (≤ 6 MB) yükleyin.");
 
-            // Kapak
-            if (vm.CoverFile is { Length: > 0 })
-            {
-                if (!IsImage(vm.CoverFile))
-                    ModelState.AddModelError(nameof(vm.CoverFile), "jpg, png, webp veya gif (≤ 6 MB) yükleyin.");
-                else
-                {
-                    var path = await SaveImage(vm.CoverFile, me.Id, "covers");
-                    DeleteIfExists(me.CoverPath);
-                    me.CoverPath = path;
-                }
-            }
+            if (vm.CoverFile is { Length: > 0 } && !IsImage(vm.CoverFile))
+                ModelState.AddModelError(nameof(vm.CoverFile), "jpg, png, webp veya gif (≤ 6 MB) yükleyin.");
 
             if (!ModelState.IsValid)
             {
+                // Mevcut görsel yollarını koru
                 vm.AvatarPath = me.AvatarPath;
                 vm.CoverPath = me.CoverPath;
                 return View(vm);
             }
 
+            // İsim–soyisim → DisplayName
+            var display = $"{vm.FirstName} {vm.LastName}".Trim();
+            me.DisplayName = string.IsNullOrWhiteSpace(display) ? vm.FirstName?.Trim() : display;
+
+            // Biyografi
+            me.Bio = vm.Bio?.Trim();
+            me.EducationInfo = vm.EducationInfo?.Trim();
+            me.Interests = vm.Interests?.Trim();
+
+            // Kullanıcı adı değiştiyse
+            if (!string.IsNullOrWhiteSpace(vm.UserName) && vm.UserName != me.UserName)
+            {
+                var setUserName = await _userManager.SetUserNameAsync(me, vm.UserName.Trim());
+                if (!setUserName.Succeeded)
+                {
+                    foreach (var e in setUserName.Errors)
+                        ModelState.AddModelError(nameof(vm.UserName), e.Description);
+                    vm.AvatarPath = me.AvatarPath;
+                    vm.CoverPath = me.CoverPath;
+                    return View(vm);
+                }
+            }
+
+            // E-posta değiştiyse
+            if (!string.IsNullOrWhiteSpace(vm.Email) && vm.Email != me.Email)
+            {
+                var setEmail = await _userManager.SetEmailAsync(me, vm.Email.Trim());
+                if (!setEmail.Succeeded)
+                {
+                    foreach (var e in setEmail.Errors)
+                        ModelState.AddModelError(nameof(vm.Email), e.Description);
+                    vm.AvatarPath = me.AvatarPath;
+                    vm.CoverPath = me.CoverPath;
+                    return View(vm);
+                }
+            }
+
+            // Avatar kaydet
+            if (vm.AvatarFile is { Length: > 0 })
+            {
+                var path = await SaveImage(vm.AvatarFile, me.Id, "avatars");
+                DeleteIfExists(me.AvatarPath);
+                me.AvatarPath = path;
+            }
+
+            // Kapak kaydet
+            if (vm.CoverFile is { Length: > 0 })
+            {
+                var path = await SaveImage(vm.CoverFile, me.Id, "covers");
+                DeleteIfExists(me.CoverPath);
+                me.CoverPath = path;
+            }
+
             await _userManager.UpdateAsync(me);
-            TempData["ok"] = "Profil güncellendi.";
+            TempData["ok"] = "Kullanıcı bilgileri güncellendi.";
             return RedirectToAction(nameof(Me));
         }
 
