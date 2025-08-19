@@ -95,6 +95,7 @@ wwwroot\scss\_mixins.scss
 wwwroot\scss\_navs.scss
 wwwroot\scss\_utilities.scss
 wwwroot\scss\_variables.scss
+wwwroot\uploads\covers\3ad08f24d324490f95a30446a9f211a7.png
 wwwroot\uploads\covers\a7610f9ab0d34f159f3ebd8c320a2d00.png
 wwwroot\uploads\covers\c105f4164e2c4f3f99e96674467dd761.png
 wwwroot\uploads\users\4b1667f1-979c-4993-ac39-ae8383281d56\avatars\1a5cca5938914aa3b9c919aba70c4972.png

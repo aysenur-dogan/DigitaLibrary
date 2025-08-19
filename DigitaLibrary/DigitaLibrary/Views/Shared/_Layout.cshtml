@@ -27,25 +27,40 @@
                     <span style="color:#2563eb;">DIGI</span><span style="color:#8b5cf6;">Library</span> 📝
                 </a>
 
-                <!-- Ana Sayfa butonu -->
+                <!-- Ana Sayfa -->
                 <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary">
                     Ana Sayfa
                 </a>
 
-                <!-- Search -->
-                <form id="searchForm" asp-controller="Search" asp-action="Index" method="get"
-                      class="flex-grow-1 position-relative">
-                    <i class="bi bi-search search-icon"></i>
-                    <input name="q" class="form-control search-input" placeholder="Ara: başlık, etiket, yazar..." />
-                </form>
+                <!-- Kategoriler (Dropdown) -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="navbarCategories"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                        Kategoriler
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="navbarCategories">
+                        @foreach (var cat in (IEnumerable<DigitaLibrary.Models.Category>)ViewBag.Categories ?? new List<DigitaLibrary.Models.Category>())
+                        {
+                            <li>
+                                <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-categoryId="@cat.Id">
+                                    @cat.Name
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
 
-                <!-- Ara butonu -->
+                <!-- Arama -->
+                <form id="searchForm" asp-controller="Home" asp-action="Index" method="get"
+                      class="flex-grow-1 position-relative ms-3">
+                    <i class="bi bi-search search-icon"></i>
+                    <input name="q" value="@Context.Request.Query["q"]"
+                           class="form-control search-input"
+                           placeholder="Ara: başlık, etiket, yazar..." />
+                </form>
                 <button type="submit" form="searchForm" class="btn btn-gradient">Ara</button>
 
                 <!-- Küçük ikon butonları -->
-                <a asp-controller="Library" asp-action="Grid" class="circle-btn" title="Kategoriler">
-                    <i class="bi bi-grid-3x3-gap"></i>
-                </a>
                 <a asp-controller="Favorites" asp-action="Index" class="circle-btn" title="Favoriler">
                     <i class="bi bi-heart"></i>
                 </a>
@@ -70,8 +85,6 @@
             </div>
         </div>
     </header>
-
-
 
     <main class="py-4">
         <div class="container">

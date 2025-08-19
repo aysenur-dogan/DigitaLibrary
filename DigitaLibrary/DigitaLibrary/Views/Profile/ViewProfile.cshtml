@@ -1,0 +1,87 @@
+﻿@model DigitaLibrary.ViewModels.ProfilePageViewModel
+@{
+    ViewData["Title"] = Model.User.DisplayName ?? Model.User.UserName;
+}
+
+<div class="container py-4">
+
+    <!-- Kullanıcı bilgileri -->
+    <div class="d-flex align-items-center mb-4">
+        <!-- Avatar -->
+        @if (!string.IsNullOrWhiteSpace(Model.User.AvatarPath))
+        {
+            <img src="@Url.Content(Model.User.AvatarPath)" alt="Avatar"
+                 class="rounded-circle me-3" style="width:80px;height:80px;object-fit:cover;" />
+        }
+        else
+        {
+            <img src="~/images/default-avatar.png" alt="Avatar"
+                 class="rounded-circle me-3" style="width:80px;height:80px;object-fit:cover;" />
+        }
+
+        <!-- İsim ve diğer bilgiler -->
+        <div>
+            <h3 class="mb-0">@Model.User.DisplayName</h3>
+            <div class="text-muted">@Model.User.Email</div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.User.EducationInfo))
+            {
+                <div><i class="bi bi-mortarboard"></i> @Model.User.EducationInfo</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.User.Interests))
+            {
+                <div><i class="bi bi-star"></i> İlgi Alanları: @Model.User.Interests</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.User.Bio))
+            {
+                <p class="mt-2">@Model.User.Bio</p>
+            }
+        </div>
+    </div>
+
+    <hr />
+
+    <!-- Akademik Çalışmalar -->
+    <h4>Akademik Çalışmalar</h4>
+    @if (!Model.MyWorks.Any())
+    {
+        <div class="alert alert-info">Bu kullanıcı henüz bir çalışma eklememiş.</div>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var w in Model.MyWorks)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrWhiteSpace(w.CoverImagePath))
+                        {
+                            <img src="@Url.Content(w.CoverImagePath)" class="card-img-top" alt="@w.Title" />
+                        }
+                        else
+                        {
+                            <img src="~/images/no-cover.png" class="card-img-top" alt="Kapak yok" />
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@w.Title</h5>
+                            <p class="card-text text-muted" style="max-height: 70px; overflow:hidden;">
+                                @w.Abstract
+                            </p>
+                        </div>
+
+                        <div class="card-footer small text-muted d-flex justify-content-between">
+                            <span>@w.Category?.Name</span>
+                            <span>@w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                        </div>
+
+                        <div class="card-footer">
+                            <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
+                               class="btn btn-sm btn-outline-primary">Detay</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

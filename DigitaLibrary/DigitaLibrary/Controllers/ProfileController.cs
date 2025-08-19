@@ -28,14 +28,14 @@ namespace DigitaLibrary.Controllers
             _env = env;
         }
 
-        // === Giriş yapan kullanıcının kendi profili ===
+        // === PROFİL SAYFASI ===
         [HttpGet]
         public async Task<IActionResult> Me()
         {
             var me = await _userManager.GetUserAsync(User);
             if (me == null) return Challenge();
 
-            var posts = await _db.Posts
+            var posts = await _db.Set<Post>()
                                  .AsNoTracking()
                                  .Where(p => p.AuthorId == me.Id)
                                  .OrderByDescending(p => p.CreatedAt)
@@ -61,63 +61,56 @@ namespace DigitaLibrary.Controllers
             return View(vm);
         }
 
-        // === Başka bir kullanıcının profili (anonim de görebilir) ===
+        // === BAŞKA BİR KULLANICININ PROFİLİNİ GÖRÜNTÜLE ===
         [AllowAnonymous]
+        [HttpGet("Profile/View/{id}")]
         public async Task<IActionResult> ViewProfile(string id)
         {
-            if (string.IsNullOrWhiteSpace(id)) return NotFound();
+            if (string.IsNullOrWhiteSpace(id))
+                return NotFound();
 
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
-            var posts = await _db.Posts
-                                 .AsNoTracking()
-                                 .Where(p => p.AuthorId == id)
-                                 .OrderByDescending(p => p.CreatedAt)
-                                 .ToListAsync();
-
             var works = await _db.AcademicWorks
-                                 .AsNoTracking()
-                                 .Where(a => a.AuthorId == id)
-                                 .OrderByDescending(a => a.CreatedAt)
-                                 .ToListAsync();
+                .Where(x => x.AuthorId == id)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
 
             var vm = new ProfilePageViewModel
             {
                 User = user,
-                MyPosts = posts,
                 MyWorks = works,
-                TotalPosts = posts.Count,
-                PublishedPosts = posts.Count(p => p.IsPublished),
-                DraftPosts = posts.Count(p => !p.IsPublished)
+                TotalPosts = 0,
+                PublishedPosts = 0,
+                DraftPosts = 0
             };
 
-            // Aynı Me.cshtml view'i kullanılabilir
-            return View("Me", vm);
+            return View("ViewProfile", vm);
         }
 
+        // === PROFİL DÜZENLEME (GET) ===
         [HttpGet]
         public async Task<IActionResult> Edit()
         {
             var me = await _userManager.GetUserAsync(User);
             if (me == null) return RedirectToAction(nameof(Me));
 
-            string first = "";
-            string last = "";
-
+            var first = me.DisplayName;
+            var last = "";
             if (!string.IsNullOrWhiteSpace(me.DisplayName))
             {
-                var parts = me.DisplayName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                first = parts.Length > 0 ? parts[0] : "";
-                last = parts.Length > 1 ? parts[1] : "";
+                var parts = me.DisplayName.Trim().Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                first = parts.ElementAtOrDefault(0) ?? "";
+                last = parts.ElementAtOrDefault(1) ?? "";
             }
 
             var vm = new ProfileEditViewModel
             {
                 FirstName = first,
                 LastName = last,
-                UserName = me.UserName,
-                Email = me.Email,
+                UserName = me.UserName ?? string.Empty,
+                Email = me.Email ?? string.Empty,
                 AvatarPath = me.AvatarPath,
                 CoverPath = me.CoverPath,
                 Bio = me.Bio,
@@ -127,6 +120,7 @@ namespace DigitaLibrary.Controllers
             return View(vm);
         }
 
+        // === PROFİL DÜZENLEME (POST) ===
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ProfileEditViewModel vm)
@@ -202,6 +196,7 @@ namespace DigitaLibrary.Controllers
             return RedirectToAction(nameof(Me));
         }
 
+        // === Yardımcılar ===
         private static bool IsImage(IFormFile f)
         {
             var ok = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
@@ -228,6 +223,7 @@ namespace DigitaLibrary.Controllers
             if (System.IO.File.Exists(full)) System.IO.File.Delete(full);
         }
 
+        // === Akademik Çalışmalar Listesi ===
         public async Task<IActionResult> MyWorks()
         {
             var me = await _userManager.GetUserAsync(User);
