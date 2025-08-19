@@ -1,79 +1,68 @@
-﻿@{
+﻿@model IEnumerable<DigitaLibrary.Models.AcademicWork>
+@{
     ViewData["Title"] = "Ana Sayfa";
 }
 
-@section Styles {
-    <style>
-        /* sayfa arka planı – yumuşak degrade */
-        .page-bg {
-            background: radial-gradient(1200px 600px at 20% -10%, #eef2ff 0%, transparent 60%), radial-gradient(1200px 700px at 90% 110%, #d1fae5 0%, transparent 60%), #f7f9fc;
-            min-height: calc(100vh - 120px);
+<div class="container py-4">
+
+    <h2 class="mb-3">Kategoriler</h2>
+    <div class="mb-4">
+        @foreach (var cat in (IEnumerable<DigitaLibrary.Models.Category>)ViewBag.Categories)
+        {
+            <a asp-action="Index" asp-route-categoryId="@cat.Id"
+               class="btn btn-sm btn-outline-primary me-2 mb-2">
+                @cat.Name
+            </a>
         }
+    </div>
 
-        /* başlık */
-        .hero-title {
-            font-weight: 700;
-            font-size: clamp(28px, 4.2vw, 48px);
-            letter-spacing: .2px;
-        }
-
-        .hero-sub {
-            color: #6b7280;
-        }
-
-        /* kartlar */
-        .soft-card {
-            background: #fff;
-            border: 1px solid #eaeaea;
-            border-radius: 16px;
-            box-shadow: 0 12px 30px -22px rgba(0,0,0,.3);
-        }
-
-        /* gradient buton */
-        .btn-gradient {
-            border-radius: 999px;
-            border: 0;
-            background: linear-gradient(90deg,#5b8cff,#6a11cb);
-            color: #fff;
-            padding: .6rem 1.15rem;
-            font-weight: 600;
-        }
-
-            .btn-gradient:hover {
-                filter: brightness(1.05);
-            }
-    </style>
-}
-
-<div class="page-bg py-4 py-md-5">
-    <div class="container">
-
-        <!-- Başlık -->
-        <div class="text-center mb-3 mb-md-4">
-            <h1 class="hero-title">Hoş Geldin! 👋</h1>
-            <p class="hero-sub">Dijital kütüphanende aradığını bul, kategorileri keşfet.</p>
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="q" value="@Context.Request.Query["q"]"
+                   placeholder="Başlık, yazar, anahtar kelime..." class="form-control" />
+            <button type="submit" class="btn btn-primary">Ara</button>
         </div>
+    </form>
 
-        <!-- Bülten -->
-        <div class="soft-card p-3 mt-3">
-            <div class="row g-2 align-items-center">
-                <div class="col-md-3">
-                    <div class="fw-semibold">Bültene katıl</div>
-                    <div class="text-muted small">Yeni içerikleri kaçırma.</div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
-                        <input class="form-control" placeholder="ornek@site.com" />
+    <h2 class="mb-3">Son Çalışmalar</h2>
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Hiç çalışma bulunamadı.</div>
+    }
+    else
+    {
+        @foreach (var w in Model)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>@w.Title</h5>
+
+                    @if (!string.IsNullOrWhiteSpace(w.Abstract))
+                    {
+                        <p class="text-muted">@w.Abstract</p>
+                    }
+
+                    <div class="mb-2">
+                        <span class="badge bg-secondary">@w.Category?.Name</span>
+                        <span class="ms-2">
+                            <!-- 👇 Yazar profiline link -->
+                            <a asp-controller="Profile"
+                               asp-action="ViewProfile"
+                               asp-route-id="@w.AuthorId">
+                                @w.Author?.DisplayName
+                            </a>
+                        </span>
+                        <span class="text-muted ms-2">
+                            @w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")
+                        </span>
                     </div>
-                </div>
-                <div class="col-md-3 text-md-end">
-                    <button class="btn btn-gradient w-100 w-md-auto">Abone Ol</button>
+
+                    <a asp-controller="AcademicWorks"
+                       asp-action="Details"
+                       asp-route-slug="@w.Slug"
+                       class="btn btn-sm btn-outline-info">Detay</a>
                 </div>
             </div>
-        </div>
-
-        <!-- Alt boşluk -->
-        <div class="py-4"></div>
-    </div>
+        }
+    }
 </div>

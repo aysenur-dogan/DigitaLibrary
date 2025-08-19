@@ -45,6 +45,18 @@ namespace DigitaLibrary.Data
             b.Entity<AcademicWork>()
                 .HasOne(x => x.Author).WithMany()
                 .HasForeignKey(x => x.AuthorId).OnDelete(DeleteBehavior.Restrict);
+
+            // 📌 Seed Categories
+            b.Entity<Category>().HasData(
+                new Category { Id = 1, Name = "Eğitim", Slug = "egitim" },
+                new Category { Id = 2, Name = "Sağlık", Slug = "saglik" },
+                new Category { Id = 3, Name = "Mühendislik ve Teknoloji", Slug = "muhendislik-teknoloji" },
+                new Category { Id = 4, Name = "Fen Bilimleri", Slug = "fen-bilimleri" },
+                new Category { Id = 5, Name = "Sosyal Bilimler", Slug = "sosyal-bilimler" },
+                new Category { Id = 6, Name = "Beşeri Bilimler", Slug = "beseri-bilimler" },
+                new Category { Id = 7, Name = "Uygulamalı Bilimler", Slug = "uygulamali-bilimler" },
+                new Category { Id = 8, Name = "Diğer", Slug = "diger" }
+            );
         }
     }
 }
