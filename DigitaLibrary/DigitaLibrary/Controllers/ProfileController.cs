@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DigitaLibrary.Data;              // AppDbContext
-using DigitaLibrary.Models;            // Admin, Post
+using DigitaLibrary.Models;            // Admin, Post, AcademicWork
 using DigitaLibrary.ViewModels;        // ProfilePageViewModel, ProfileEditViewModel
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace DigitaLibrary.Controllers
 {
@@ -36,11 +35,20 @@ namespace DigitaLibrary.Controllers
             var me = await _userManager.GetUserAsync(User);
             if (me == null) return Challenge();
 
+            // Yazılar
             var posts = await _db.Set<Post>()
                                  .AsNoTracking()
-                                 .Where(p => p.AuthorId == me.Id)             // alan adları farklıysa uyarlayın
+                                 .Where(p => p.AuthorId == me.Id)
                                  .OrderByDescending(p => p.CreatedAt)
                                  .ToListAsync();
+
+            // Akademik Çalışmalar (profilde kart olarak göstereceğiz - son 8 kayıt)
+            var myWorks = await _db.AcademicWorks
+                                   .AsNoTracking()
+                                   .Where(a => a.AuthorId == me.Id)
+                                   .OrderByDescending(a => a.CreatedAt)
+                                   .Take(8)
+                                   .ToListAsync();
 
             var vm = new ProfilePageViewModel
             {
@@ -48,7 +56,10 @@ namespace DigitaLibrary.Controllers
                 MyPosts = posts,
                 TotalPosts = posts.Count,
                 PublishedPosts = posts.Count(p => p.IsPublished),
-                DraftPosts = posts.Count(p => !p.IsPublished)
+                DraftPosts = posts.Count(p => !p.IsPublished),
+
+                // >>> EK: Profilde kartlar için
+                MyWorks = myWorks
             };
 
             return View(vm);
@@ -79,7 +90,7 @@ namespace DigitaLibrary.Controllers
                 AvatarPath = me.AvatarPath,
                 CoverPath = me.CoverPath,
                 Bio = me.Bio,
-                 EducationInfo = me.EducationInfo,
+                EducationInfo = me.EducationInfo,
                 Interests = me.Interests
             };
             return View(vm);
@@ -99,7 +110,7 @@ namespace DigitaLibrary.Controllers
             if (string.IsNullOrWhiteSpace(vm.FirstName))
                 ModelState.AddModelError(nameof(vm.FirstName), "İsim gereklidir.");
 
-            // Dosya doğrulamaları (mevcut yardımcılarınızı kullanıyoruz)
+            // Dosya doğrulamaları
             if (vm.AvatarFile is { Length: > 0 } && !IsImage(vm.AvatarFile))
                 ModelState.AddModelError(nameof(vm.AvatarFile), "jpg, png, webp veya gif (≤ 6 MB) yükleyin.");
 
@@ -197,6 +208,21 @@ namespace DigitaLibrary.Controllers
             if (string.IsNullOrWhiteSpace(webPath)) return;
             var full = Path.Combine(_env.WebRootPath, webPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
             if (System.IO.File.Exists(full)) System.IO.File.Delete(full);
+        }
+
+        // === Akademik çalışmaların TAM listesi (profil sekmesindeki buton buraya gider) ===
+        public async Task<IActionResult> MyWorks()
+        {
+            var me = await _userManager.GetUserAsync(User);
+            if (me == null) return Challenge();
+
+            var works = await _db.AcademicWorks
+                .Where(x => x.AuthorId == me.Id)
+                .OrderByDescending(x => x.CreatedAt)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return View(works); // Views/Profile/MyWorks.cshtml
         }
     }
 }

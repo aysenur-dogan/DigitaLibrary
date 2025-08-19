@@ -295,3 +295,6 @@ C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\obj\Debug\net8.0\DigitaLibrary.pdb
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\obj\Debug\net8.0\DigitaLibrary.genruntimeconfig.cache
 C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\obj\Debug\net8.0\ref\DigitaLibrary.dll
+C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\bin\Debug\net8.0\AngleSharp.dll
+C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\bin\Debug\net8.0\AngleSharp.Css.dll
+C:\Users\ayşenur doğan\source\repos\DigitaLibrary\DigitaLibrary\DigitaLibrary\bin\Debug\net8.0\HtmlSanitizer.dll

@@ -1,0 +1,140 @@
+﻿@model DigitaLibrary.ViewModels.AcademicWorkCreateVm
+@using DigitaLibrary.Models
+@{
+    ViewData["Title"] = "Akademik Çalışma Ekle";
+    var categories = ViewBag.Categories as IEnumerable<Category>;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    @Html.AntiForgeryToken()
+
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label">Başlık</label>
+        <input asp-for="Title" class="form-control" placeholder="Çalışmanızın başlığı" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="row g-2">
+        <div class="col-md-6">
+            <label asp-for="Authors" class="form-label">Yazar(lar)</label>
+            <input asp-for="Authors" class="form-control" placeholder="Ad Soyad, Ad Soyad" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Institution" class="form-label">Kurum</label>
+            <input asp-for="Institution" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label asp-for="Year" class="form-label">Yıl</label>
+            <input asp-for="Year" class="form-control" />
+        </div>
+    </div>
+
+    <div class="row g-2 mt-2">
+        <div class="col-md-4">
+            <label asp-for="AuthorTitle" class="form-label">Yazar Unvanı</label>
+            <input asp-for="AuthorTitle" class="form-control" placeholder="Örn: Prof. Dr., Öğrenci" />
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Supervisor" class="form-label">Danışman</label>
+            <input asp-for="Supervisor" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Kategori</label>
+            <select asp-for="CategoryId" class="form-select"
+                    asp-items="@(new SelectList(categories ?? Enumerable.Empty<Category>(), "Id", "Name"))">
+                <option value="">—</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row g-2 mt-2">
+        <div class="col-md-6">
+            <label asp-for="PublicationType" class="form-label">Yayın Türü</label>
+            <select asp-for="PublicationType" class="form-select"
+                    asp-items="Html.GetEnumSelectList<PublicationType>()"></select>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Language" class="form-label">Dil</label>
+            <select asp-for="Language" class="form-select"
+                    asp-items="Html.GetEnumSelectList<WorkLanguage>()"></select>
+        </div>
+    </div>
+
+    <div class="mb-3 mt-2">
+        <label asp-for="Keywords" class="form-label">Anahtar Kelimeler</label>
+        <input asp-for="Keywords" class="form-control" placeholder="virgülle ayırın" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Abstract" class="form-label">Özet</label>
+        <textarea asp-for="Abstract" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="Abstract" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Kategori</label>
+        <select asp-for="CategoryId"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+            <option value="">-- Kategori Seçin --</option>
+        </select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label d-block">İçerik Türü</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" asp-for="ContentMode" value="FileOnly" id="m1" checked>
+            <label class="form-check-label" for="m1">Sadece Dosya</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" asp-for="ContentMode" value="TextOnly" id="m2">
+            <label class="form-check-label" for="m2">Sadece Metin</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" asp-for="ContentMode" value="FileAndText" id="m3">
+            <label class="form-check-label" for="m3">İkisi</label>
+        </div>
+    </div>
+
+    <div id="file-area" class="mb-3">
+        <label asp-for="File" class="form-label">PDF veya DOCX</label>
+        <input asp-for="File" type="file" class="form-control" />
+        <small class="text-muted">PDF/DOCX, ≤20MB</small>
+        <span asp-validation-for="File" class="text-danger"></span>
+    </div>
+
+    <div id="text-area" class="mb-3" style="display:none;">
+        <label asp-for="HtmlContent" class="form-label">Sitede Yaz (Zengin Metin)</label>
+        <textarea asp-for="HtmlContent" class="form-control" rows="10"></textarea>
+        <span asp-validation-for="HtmlContent" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CoverImage" class="form-label">Kapak Resmi</label>
+        <input asp-for="CoverImage" type="file" class="form-control" accept="image/*" />
+        <small class="text-muted">JPG/PNG/WEBP/GIF</small>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Slug" class="form-label">Slug (URL)</label>
+        <input asp-for="Slug" class="form-control" placeholder="boşsa başlıktan üretilecek" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kaydet</button>
+    <a asp-action="Index" class="btn btn-secondary">Liste</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function syncAreas(){
+          const v = document.querySelector('input[name="ContentMode"]:checked')?.value;
+          document.getElementById('file-area').style.display = (v==='TextOnly') ? 'none' : '';
+          document.getElementById('text-area').style.display = (v==='FileOnly') ? 'none' : '';
+        }
+        document.querySelectorAll('input[name="ContentMode"]').forEach(r=>r.addEventListener('change',syncAreas));
+        syncAreas();
+    </script>
+}

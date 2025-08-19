@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using DigitaLibrary.Data;      // AppDbContext için
-using DigitaLibrary.Models;    // Admin için
+using DigitaLibrary.Models;
+using DigitaLibrary.Data;
+using Microsoft.EntityFrameworkCore;
+// Admin için
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +69,23 @@ app.MapGet("/Identity/Account/Manage/Index", ctx => {
 app.MapGet("/Identity/Account/Manage/{**_}", ctx => {
     ctx.Response.Redirect("/Profile/Me", permanent: true);
     return Task.CompletedTask;
+    
+
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+    builder.Services.AddIdentity<Admin, IdentityRole>()
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddDefaultTokenProviders();
+
+    var app = builder.Build();
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+    app.Run();
+
 });
 
 // ✅ Migrationları otomatik uygula

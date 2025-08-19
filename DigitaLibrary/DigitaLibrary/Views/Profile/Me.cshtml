@@ -4,9 +4,8 @@
 @{
     ViewData["Title"] = "Profilim";
     var cover = string.IsNullOrWhiteSpace(Model.User?.CoverPath)
-    ? ""
-    : Url.Content(Model.User!.CoverPath);
-
+        ? ""
+        : Url.Content(Model.User!.CoverPath);
 
     var avatar = string.IsNullOrWhiteSpace(Model.User?.AvatarPath)
         ? Url.Content("~/images/defaults/avatar.png")
@@ -30,6 +29,9 @@
         firstName = parts.ElementAtOrDefault(0) ?? "";
         lastName = parts.ElementAtOrDefault(1) ?? "";
     }
+
+    // Yeni: Akademik çalışma sayısı (sekmede badge için)
+    var worksCount = Model.MyWorks?.Count() ?? 0;
 }
 
 @section Styles {
@@ -52,12 +54,11 @@
             border-radius: 0;
             box-shadow: none;
             z-index: 0;
-            background: linear-gradient(90deg,#6366f1 0%, #8b5cf6 50%, #06b6d4 100%); /* kapak yoksa */
+            background: linear-gradient(90deg,#6366f1 0%, #8b5cf6 50%, #06b6d4 100%);
         }
 
-            /* Kapak görseli varsa: fotoğrafı kapak yap, üstüne hafif bir degrade at */
             .profile-cover.has-cover {
-                background: center / cover no-repeat; /* background-image inline gelecek */
+                background: center / cover no-repeat;
             }
 
                 .profile-cover.has-cover::after {
@@ -66,7 +67,6 @@
                     inset: 0;
                     background: linear-gradient(0deg, rgba(0,0,0,.15), rgba(0,0,0,.15));
                 }
-
 
         .cover-inner {
             height: 100%;
@@ -177,13 +177,11 @@
             align-items: center;
         }
 
-        /* Biyografi satır sonlarını korumak istersen (chip-block yerine) */
         .bio-display {
             white-space: pre-wrap;
             word-break: break-word;
         }
 
-        /* --- Chip tasarımı --- */
         .chip {
             display: inline-block;
             padding: .35rem .75rem;
@@ -215,6 +213,30 @@
 
         .muted {
             color: #6b7280;
+        }
+
+        /* Akademik çalışma kartları */
+        .work-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-top-left-radius: .5rem;
+            border-top-right-radius: .5rem;
+        }
+
+        .work-card .title {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .work-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .work-card .meta {
+            color: #6b7280;
+            font-size: .85rem;
         }
 
         @@media (max-width: 576px) {
@@ -252,7 +274,6 @@
         </div>
     </div>
 
-
     <div class="auth-card">
         <div class="heading">
             <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-3">
@@ -279,28 +300,31 @@
                         <i class="bi bi-person-badge"></i> Kullanıcı Bilgileri
                     </button>
                 </li>
+
+                <!-- SEKME: Akademik Çalışmalarım (Model.MyWorks) -->
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="myitems-tab" data-bs-toggle="tab" data-bs-target="#myitems"
                             type="button" role="tab" aria-controls="myitems" aria-selected="false">
                         <i class="bi bi-journal-text"></i> Akademik Çalışmalarım
-                        @if (total > 0)
+                        @if (worksCount > 0)
                         {
-                            <span class="badge bg-secondary ms-1">@total</span>
+                            <span class="badge bg-secondary ms-1">@worksCount</span>
                         }
                     </button>
                 </li>
 
                 <li class="ms-auto">
-                    <a class="btn btn-primary" asp-controller="Posts" asp-action="Create">
-                        <i class="bi bi-plus-circle"></i> Makale Ekle
+                    <a class="btn btn-primary"
+                       asp-controller="AcademicWorks"
+                       asp-action="Create">
+                        <i class="bi bi-plus-circle me-1"></i> Makale Ekle
                     </a>
                 </li>
             </ul>
 
             <div class="tab-content mt-3" id="profileTabsContent">
+                <!-- Bilgiler -->
                 <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
-
-                    <!-- İsim / Soyisim -->
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="section-title mb-2">İsim</div>
@@ -312,7 +336,6 @@
                         </div>
                     </div>
 
-                    <!-- E-posta -->
                     <div class="row g-4 mt-1">
                         <div class="col-12">
                             <div class="section-title mb-2">E-posta</div>
@@ -320,10 +343,6 @@
                         </div>
                     </div>
 
-                    <!-- Biyografi -->
-                    
-
-                    @* Eğitim Bilgileri & İlgi Alanları *@
                     @{
                         var interests = (Model.User?.Interests ?? "")
                         .Split(',', StringSplitOptions.RemoveEmptyEntries)
@@ -362,6 +381,7 @@
                             }
                         </div>
                     </div>
+
                     <div class="mb-3 mt-3">
                         <div class="section-title mb-2">Biyografi</div>
                         @if (!string.IsNullOrWhiteSpace(Model.User?.Bio))
@@ -373,6 +393,7 @@
                             <div class="muted">Kullanıcı biyografisi girilmemiştir.</div>
                         }
                     </div>
+
                     <div class="mt-3 d-flex gap-2">
                         <a asp-controller="Profile" asp-action="Edit" class="btn btn-outline-primary">
                             <i class="bi bi-pencil"></i> Bilgileri Güncelle
@@ -381,38 +402,44 @@
                             <i class="bi bi-shield-lock"></i> Şifre Değiştir
                         </a>
                     </div>
-
                 </div>
 
+                <!-- SEKME: Akademik Çalışmalarım (kart grid) -->
                 <div class="tab-pane fade" id="myitems" role="tabpanel" aria-labelledby="myitems-tab" tabindex="0">
-                    @if (Model.MyPosts != null && Model.MyPosts.Any())
+                    @if (Model.MyWorks != null && Model.MyWorks.Any())
                     {
                         <div class="row g-3">
-                            @foreach (var p in Model.MyPosts)
+                            @foreach (var w in Model.MyWorks)
                             {
-                                <div class="col-md-6">
-                                    <div class="item-card d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <div class="fw-semibold">@p.Title</div>
-                                            <div class="text-muted small">
-                                                <i class="bi bi-calendar2"></i>
-                                                @p.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")
+                                <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
+                                    <div class="card shadow-sm h-100 work-card">
+                                        <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug">
+                                            <img src="@(string.IsNullOrWhiteSpace(w.CoverImagePath)
+                                                                                                         ? Url.Content("~/images/placeholders/cover-400x250.png")
+                                                                                                         : Url.Content(w.CoverImagePath))"
+                                         alt="@w.Title" />
+                                    <div class="card-body">
+                                        <div class="title">@w.Title</div>
+                                        @if (!string.IsNullOrWhiteSpace(w.Authors))
+                                                {
+                                                    <div class="meta mt-1">@w.Authors</div>
+                                                }
+                                                <div class="meta">@w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</div>
                                             </div>
-                                        </div>
-                                        <div class="btn-group btn-group-sm">
-                                            <a asp-controller="Posts" asp-action="Details" asp-route-id="@p.Id" class="btn btn-outline-primary">Görüntüle</a>
-                                            <a asp-controller="Posts" asp-action="Edit" asp-route-id="@p.Id" class="btn btn-outline-secondary">Düzenle</a>
-                                        </div>
+                                        </a>
                                     </div>
                                 </div>
                             }
+                        </div>
+                        <div class="mt-3">
+                            <a class="btn btn-outline-primary" asp-controller="Profile" asp-action="MyWorks">Tümünü Gör</a>
                         </div>
                     }
                     else
                     {
                         <div class="empty">
-                            <span>Henüz paylaşım yok.</span>
-                            <a asp-controller="Posts" asp-action="Create" class="btn btn-primary btn-sm">İlkini Ekle</a>
+                            <span>Henüz akademik çalışma yok.</span>
+                            <a asp-controller="AcademicWorks" asp-action="Create" class="btn btn-primary btn-sm">İlkini Ekle</a>
                         </div>
                     }
                 </div>

@@ -1,0 +1,114 @@
+﻿@model DigitaLibrary.ViewModels.AcademicWorkCreateVm
+@{
+    ViewData["Title"] = "Çalışmayı Düzenle";
+}
+
+<h2>Çalışmayı Düzenle</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Başlık -->
+    <div class="mb-3">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <!-- Yazarlar, Kurum, Yıl -->
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="Authors" class="form-label"></label>
+            <input asp-for="Authors" class="form-control" />
+        </div>
+        <div class="col">
+            <label asp-for="Institution" class="form-label"></label>
+            <input asp-for="Institution" class="form-control" />
+        </div>
+        <div class="col">
+            <label asp-for="Year" class="form-label"></label>
+            <input asp-for="Year" class="form-control" />
+        </div>
+    </div>
+
+    <!-- Unvan ve Danışman -->
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="AuthorTitle" class="form-label"></label>
+            <input asp-for="AuthorTitle" class="form-control" />
+        </div>
+        <div class="col">
+            <label asp-for="Supervisor" class="form-label"></label>
+            <input asp-for="Supervisor" class="form-control" />
+        </div>
+    </div>
+
+    <!-- Yayın Türü ve Dil -->
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="PublicationType" class="form-label"></label>
+            <select asp-for="PublicationType" asp-items="Html.GetEnumSelectList<PublicationType>()" class="form-select"></select>
+        </div>
+        <div class="col">
+            <label asp-for="Language" class="form-label"></label>
+            <select asp-for="Language" asp-items="Html.GetEnumSelectList<WorkLanguage>()" class="form-select"></select>
+        </div>
+    </div>
+
+    <!-- Anahtar kelimeler -->
+    <div class="mb-3">
+        <label asp-for="Keywords" class="form-label"></label>
+        <input asp-for="Keywords" class="form-control" />
+    </div>
+
+    <!-- Özet -->
+    <div class="mb-3">
+        <label asp-for="Abstract" class="form-label"></label>
+        <textarea asp-for="Abstract" class="form-control" rows="4"></textarea>
+    </div>
+
+    <!-- Kategori -->
+    <div class="mb-3">
+        <label asp-for="CategoryId" class="form-label">Kategori</label>
+        <select asp-for="CategoryId"
+                class="form-select"
+                asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name", Model.CategoryId))">
+            <option value="">-- Kategori Seçin --</option>
+        </select>
+    </div>
+
+    <!-- İçerik türü -->
+    <div class="mb-3">
+        <label asp-for="ContentMode" class="form-label"></label><br />
+        @Html.RadioButtonFor(m => m.ContentMode, ContentMode.FileOnly) Sadece Dosya
+        @Html.RadioButtonFor(m => m.ContentMode, ContentMode.TextOnly) Sadece Metin
+        @Html.RadioButtonFor(m => m.ContentMode, ContentMode.FileAndText) İkisi
+    </div>
+
+    <!-- HtmlContent -->
+    <div class="mb-3">
+        <label asp-for="HtmlContent" class="form-label">Metin İçerik</label>
+        <textarea asp-for="HtmlContent" class="form-control" rows="8"></textarea>
+    </div>
+
+    <!-- Dosya -->
+    <div class="mb-3">
+        <label asp-for="File" class="form-label"></label>
+        <input asp-for="File" type="file" class="form-control" />
+    </div>
+
+    <!-- Kapak -->
+    <div class="mb-3">
+        <label asp-for="CoverImage" class="form-label"></label>
+        <input asp-for="CoverImage" type="file" class="form-control" />
+    </div>
+
+    <!-- Slug -->
+    <div class="mb-3">
+        <label asp-for="Slug" class="form-label"></label>
+        <input asp-for="Slug" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a asp-action="Index" class="btn btn-secondary">İptal</a>
+</form>

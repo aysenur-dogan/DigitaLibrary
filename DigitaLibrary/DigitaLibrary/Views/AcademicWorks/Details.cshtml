@@ -1,0 +1,73 @@
+﻿@model DigitaLibrary.Models.AcademicWork
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container py-3">
+    <h1 class="mb-3">@Model.Title</h1>
+
+    @* Kapak *@
+    @if (!string.IsNullOrWhiteSpace(Model.CoverImagePath))
+    {
+        <img src="@Url.Content(Model.CoverImagePath)" alt="Kapak" class="img-fluid rounded mb-3" />
+    }
+
+    @* Meta *@
+    <div class="text-muted mb-3">
+        @if (!string.IsNullOrWhiteSpace(Model.Authors))
+        {
+            <span>@Model.Authors</span>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.AuthorTitle))
+        {
+            <span> • @Model.AuthorTitle</span>
+        }
+        @if (Model.Year.HasValue)
+        {
+            <span> • @Model.Year</span>
+        }
+        @if (Model.Category != null)
+        {
+            <span> • @Model.Category.Name</span>
+        }
+        <span> • @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
+    </div>
+
+    @* Özet *@
+    @if (!string.IsNullOrWhiteSpace(Model.Abstract))
+    {
+        <h5>Özet</h5>
+        <div style="white-space: pre-line; line-height:1.6">@Model.Abstract</div>
+        <hr />
+    }
+
+    @* Sitede Yazılan Metin *@
+    @if (!string.IsNullOrWhiteSpace(Model.HtmlContent))
+    {
+        <h5>Metin İçerik</h5>
+        <div style="white-space: pre-line; line-height:1.7">
+            @Model.HtmlContent
+        </div>
+        <hr />
+    }
+
+    @* Dosya linki/önizleme *@
+    @if (!string.IsNullOrWhiteSpace(Model.FilePath))
+    {
+        <h5>Dosya</h5>
+        <a class="btn btn-outline-primary me-2" href="@Url.Content(Model.FilePath)" target="_blank">Dosyayı Aç</a>
+
+        @if ((Model.FileType ?? "").Contains("pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="ratio ratio-16x9 mt-3">
+                <iframe src="@Url.Content(Model.FilePath)" title="Önizleme" frameborder="0"></iframe>
+            </div>
+        }
+    }
+
+    <!-- 👇 Yeni eklenen butonlar -->
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Düzenle</a>
+        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+    </div>
+</div>

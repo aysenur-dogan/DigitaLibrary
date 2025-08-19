@@ -1,0 +1,32 @@
+﻿@model IEnumerable<DigitaLibrary.Models.AcademicWork>
+@{
+    ViewData["Title"] = "Akademik Çalışmalarım";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Başlık</th>
+            <th>Yıl</th>
+            <th>Kategori</th>
+            <th>Tarih</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var w in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug">
+                        @w.Title
+                    </a>
+                </td>
+                <td>@w.Year</td>
+                <td>@w.Category?.Name</td>
+                <td>@w.CreatedAt.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

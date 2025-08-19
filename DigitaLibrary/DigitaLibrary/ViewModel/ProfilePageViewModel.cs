@@ -8,6 +8,7 @@ namespace DigitaLibrary.ViewModels
     [NotMapped]
     public class ProfilePageViewModel
     {
+        public IEnumerable<AcademicWork> MyWorks { get; set; } = new List<AcademicWork>();
         public Admin User { get; set; } = default!;
         public IEnumerable<Post> MyPosts { get; set; } = new List<Post>();
 
