@@ -2,16 +2,17 @@
 :root {
     --primary-1: #4f46e5; /* indigo-600 */
     --primary-2: #06b6d4; /* cyan-500 */
-    --muted: #6b7280; /* gray-500 */
+    --muted: #6b7280;     /* gray-500 */
 }
 
-html, body {
-    height: 100%;
-}
+html, body { height: 100%; }
 
 body {
     font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: radial-gradient(1200px 600px at 10% 0%, #e0e7ff 0%, transparent 60%), radial-gradient(1000px 600px at 100% 100%, #cffafe 0%, transparent 60%), linear-gradient(135deg, #f6f7fb, #eef2ff);
+    background:
+      radial-gradient(1200px 600px at 10% 0%, #e0e7ff 0%, transparent 60%),
+      radial-gradient(1000px 600px at 100% 100%, #cffafe 0%, transparent 60%),
+      linear-gradient(135deg, #f6f7fb, #eef2ff);
     color: #0f172a;
 }
 
@@ -34,139 +35,200 @@ body {
     box-shadow: 0 18px 60px rgba(79,70,229,.20), 0 6px 20px rgba(2,6,23,.08);
     overflow: hidden;
 }
-
-    /* Sol dekor panel (isteğe bağlı görsel) */
-    .card-auth .hero {
-        background: radial-gradient(600px 300px at 20% 10%, rgba(79,70,229,.25), transparent 60%), radial-gradient(400px 240px at 90% 80%, rgba(6,182,212,.25), transparent 60%), linear-gradient(135deg, #312e81, #0f172a);
-        color: #eef2ff;
-    }
+.card-auth .hero {
+    background:
+      radial-gradient(600px 300px at 20% 10%, rgba(79,70,229,.25), transparent 60%),
+      radial-gradient(400px 240px at 90% 80%, rgba(6,182,212,.25), transparent 60%),
+      linear-gradient(135deg, #312e81, #0f172a);
+    color: #eef2ff;
+}
 
 /* Başlıklar */
-.h-title {
-    font-weight: 700;
-    letter-spacing: .2px;
-}
-
-.h-sub {
-    color: var(--muted);
-}
+.h-title { font-weight: 700; letter-spacing: .2px; }
+.h-sub   { color: var(--muted); }
 
 /* ---- Input/label ---- */
-.form-label {
-    font-weight: 600;
-}
-
+.form-label { font-weight: 600; }
 .input-icon {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-    border-radius: 999px;
-    padding: 10px 14px;
-    transition: border-color .2s, box-shadow .2s, background .2s;
+    display: flex; align-items: center; gap: 10px;
+    background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 999px;
+    padding: 10px 14px; transition: border-color .2s, box-shadow .2s, background .2s;
 }
-
-    .input-icon:focus-within {
-        border-color: rgba(79,70,229,.45);
-        box-shadow: 0 0 0 4px rgba(79,70,229,.15);
-        background: #eef2ff;
-    }
-
-    .input-icon i {
-        font-size: 1.1rem;
-        color: #6b7280;
-    }
-
-    .input-icon input {
-        border: 0;
-        outline: none;
-        background: transparent;
-        width: 100%;
-        padding: 6px 2px;
-    }
+.input-icon:focus-within { border-color: rgba(79,70,229,.45); box-shadow: 0 0 0 4px rgba(79,70,229,.15); background: #eef2ff; }
+.input-icon i { font-size: 1.1rem; color: #6b7280; }
+.input-icon input { border: 0; outline: none; background: transparent; width: 100%; padding: 6px 2px; }
 
 /* ---- Buton ---- */
 .btn-gradient {
-    border: 0;
-    border-radius: 999px;
-    padding: 12px 18px;
-    font-weight: 700;
-    color: white;
+    border: 0; border-radius: 999px; padding: 12px 18px; font-weight: 700; color: white;
     background: linear-gradient(90deg, var(--primary-1), var(--primary-2));
     transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
     box-shadow: 0 10px 24px rgba(79,70,229,.25);
 }
-
-    .btn-gradient:hover {
-        filter: brightness(1.05);
-        transform: translateY(-1px);
-    }
-
-    .btn-gradient:active {
-        transform: translateY(0);
-    }
+.btn-gradient:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.btn-gradient:active { transform: translateY(0); }
 
 /* links */
-.link-soft {
-    color: #475569;
-}
-
-    .link-soft:hover {
-        color: #111827;
-        text-decoration: underline;
-    }
+.link-soft { color: #475569; }
+.link-soft:hover { color: #111827; text-decoration: underline; }
 
 /* küçük gri çizgi */
-.hr-soft {
-    border-top: 1px solid rgba(15,23,42,.08);
-}
-:root {
-    --grad-start: #6a11cb; /* login'de kullandığın gradient başlangıcı */
-    --grad-end: #2575fc; /* login'de kullandığın gradient bitişi */
+.hr-soft { border-top: 1px solid rgba(15,23,42,.08); }
+
+:root{
+    --grad-start: #6a11cb;
+    --grad-end:   #2575fc;
     --glass-bg: rgba(255,255,255,0.65);
 }
 
-.profile-hero {
-    background: linear-gradient(90deg, var(--grad-start), var(--grad-end));
-    height: 200px;
-    border-radius: 1.25rem;
-    position: relative;
-}
-
+.profile-hero { background: linear-gradient(90deg, var(--grad-start), var(--grad-end)); height: 200px; border-radius: 1.25rem; position: relative; }
 .profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 4px solid #fff;
-    position: absolute;
-    left: 24px;
-    bottom: -60px;
-    box-shadow: 0 8px 24px rgba(0,0,0,.15);
+    width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #fff;
+    position: absolute; left: 24px; bottom: -60px; box-shadow: 0 8px 24px rgba(0,0,0,.15);
+}
+.profile-actions { position: absolute; right: 16px; bottom: 16px; display: flex; gap: 10px; }
+.glass-card { background: var(--glass-bg); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+@media (max-width:576px){
+    .profile-avatar { width: 90px; height: 90px; bottom: -45px; left: 12px; }
 }
 
-.profile-actions {
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
+/* -------- Kart genel efektleri -------- */
+.work-card { transition: transform 0.2s ease-in-out; }
+.work-card:hover { transform: scale(1.02); }
+
+/* (Eski) kapak hover büyütme — card-compact için yeni kural aşağıda override ediyor */
+.work-cover { transition: transform 0.3s ease-in-out; }
+.work-card:hover .work-cover { transform: scale(1.1); }
+
+/* Beğeni/Kaydet renkleri */
+.btn-like.active { color: #e63946; }
+.btn-save.active { color: #0d6efd; }
+.btn-like { border: none; background: transparent; font-size: 1.2rem; cursor: pointer; }
+
+/* ========== PROFİLLE AYNI: Kare kapak + sabit kart iskeleti ========== */
+.card-compact{
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    height: 360px;                  /* profil kart yüksekliği ile eşleştir (gerekirse 320–380 arası ayarlayabilirsin) */
+    border-radius: 12px;
 }
 
-.glass-card {
-    background: var(--glass-bg);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 1rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,.08);
+/* Kapak alanını kare sabitle */
+.card-compact .cover-wrap{
+    position: relative;
+    overflow: hidden;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background: #f3f4f6;
+    aspect-ratio: 1 / 1;           /* modern tarayıcılar için kare */
 }
 
-@media (max-width:576px) {
-    .profile-avatar {
-        width: 90px;
-        height: 90px;
-        bottom: -45px;
-        left: 12px;
+/* Fallback: aspect-ratio yoksa kare hilesi */
+@supports not (aspect-ratio: 1/1) {
+    .card-compact .cover-wrap::before{
+        content:"";
+        display:block;
+        padding-top:100%;          /* kare alan */
+    }
+    .card-compact .cover-wrap > img{
+        position:absolute; inset:0;
     }
 }
+
+/* Kapak görseli hizası (hepsi aynı kırpma) */
+.card-compact .cover-wrap > img{
+    width:100%; height:100%;
+    object-fit:cover;
+    transition: transform .3s ease-in-out;
+}
+
+/* Hover büyütme (card-compact için) — bu kural en sonda, eski .work-card hover'ını override eder */
+.card-compact:hover .cover-wrap > img { transform: scale(1.06); }
+
+/* İçerik hizası */
+.card-compact .card-body{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:12px;
+    overflow:hidden;
+}
+
+.card-compact .card-title{
+    font-size:1rem;
+    line-height:1.3;
+    max-height: calc(1.3em * 2);   /* başlık 2 satırı geçerse kırp */
+    overflow:hidden;
+}
+
+/* Alt bölümler sabit boşlukla */
+.card-compact .card-footer{ padding:8px 12px; }
+.icon-btn{ border:0; background:transparent; padding:0; font-size:1.25rem; cursor:pointer; line-height:1; }
+/* === PROFİLLE AYNI KOMPAKT KART === */
+.card-compact{
+    display:flex;
+    flex-direction:column;
+    height:300px;                 /* profil kart yüksekliği: istersen 280–320 arası ince ayar */
+    border-radius:12px;
+    overflow:hidden;
+}
+
+/* Kare kapak alanı */
+.card-compact .cover-wrap{
+    position:relative;
+    overflow:hidden;
+    aspect-ratio:1/1;             /* kare */
+    background:#f3f4f6;
+}
+@supports not (aspect-ratio:1/1){
+    .card-compact .cover-wrap::before{content:"";display:block;padding-top:100%;}
+    .card-compact .cover-wrap>img{position:absolute;inset:0;}
+}
+.card-compact .cover-wrap>img{
+    width:100%;height:100%;
+    object-fit:cover;
+    transition:transform .3s ease-in-out;
+}
+.card-compact:hover .cover-wrap>img{ transform:scale(1.06); }
+
+/* Gövde kompakt tipografi */
+.card-compact .card-body{
+    flex:0 0 auto;
+    padding:10px 12px;
+}
+.card-compact .card-title{
+    font-size:.95rem;
+    font-weight:600;
+    margin:0 0 6px 0;
+    line-height:1.3;
+}
+
+/* Alt bilgi */
+.card-compact .card-footer{
+    flex:0 0 auto;
+    padding:6px 12px;
+    background:#fff;
+}
+
+/* İkon butonları */
+.icon-btn{border:0;background:transparent;padding:0;font-size:1.25rem;line-height:1;cursor:pointer;}
+
+/* Çok satırı kibarca kırp (webkit) */
+.line-2{
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+.line-1{
+    display:-webkit-box;
+    -webkit-line-clamp:1;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+}
+
+/* Kart genel efektleri (varsa mevcut kuralların kalsın) */
+.work-card{ transition:transform .2s ease-in-out; }
+.work-card:hover{ transform:scale(1.02); }

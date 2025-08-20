@@ -216,6 +216,31 @@ namespace DigitaLibrary.Migrations
                     b.ToTable("AcademicWorks");
                 });
 
+            modelBuilder.Entity("DigitaLibrary.Models.Bookmark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AcademicWorkId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicWorkId");
+
+                    b.HasIndex("UserId", "AcademicWorkId")
+                        .IsUnique();
+
+                    b.ToTable("Bookmarks");
+                });
+
             modelBuilder.Entity("DigitaLibrary.Models.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -290,6 +315,31 @@ namespace DigitaLibrary.Migrations
                             Name = "Diğer",
                             Slug = "diger"
                         });
+                });
+
+            modelBuilder.Entity("DigitaLibrary.Models.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AcademicWorkId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicWorkId");
+
+                    b.HasIndex("UserId", "AcademicWorkId")
+                        .IsUnique();
+
+                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("DigitaLibrary.Models.Post", b =>
@@ -536,6 +586,44 @@ namespace DigitaLibrary.Migrations
                     b.Navigation("Author");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("DigitaLibrary.Models.Bookmark", b =>
+                {
+                    b.HasOne("DigitaLibrary.Models.AcademicWork", "Work")
+                        .WithMany()
+                        .HasForeignKey("AcademicWorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Admin", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Work");
+                });
+
+            modelBuilder.Entity("DigitaLibrary.Models.Favorite", b =>
+                {
+                    b.HasOne("DigitaLibrary.Models.AcademicWork", "Work")
+                        .WithMany()
+                        .HasForeignKey("AcademicWorkId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Admin", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Work");
                 });
 
             modelBuilder.Entity("DigitaLibrary.Models.Post", b =>

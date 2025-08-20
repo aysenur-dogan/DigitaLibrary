@@ -1,0 +1,96 @@
+﻿@model IEnumerable<DigitaLibrary.Models.Bookmark>
+@{
+    ViewData["Title"] = "Kaydedilenlerim";
+}
+
+<!-- Profildeki kart boyutu ve hizası için ufak CSS -->
+<style>
+    /* Kart: profil stili */
+    .work-card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    /* Kapak resmi: sabit yükseklik + cover kırpma */
+    .work-cover {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        transition: transform .3s ease;
+        display: block;
+    }
+
+    .work-card:hover .work-cover {
+        transform: scale(1.05);
+    }
+
+    /* Gövde kompakt, başlık 2 satırda kırp */
+    .work-card .card-body {
+        padding: 10px 12px;
+    }
+
+    .work-card .card-title {
+        font-size: .95rem;
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* en fazla 2 satır */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Alt bilgi sıkı aralıklar */
+    .work-card .card-footer {
+        padding: 6px 12px;
+        font-size: .85rem;
+    }
+</style>
+
+<h2 class="mb-3">Kaydedilenlerim</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Henüz kaydettiğiniz bir içerik yok.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var b in Model)
+        {
+            var w = b.Work!;
+            <div class="col">
+                <div class="card h-100 shadow-sm work-card">
+                    <!-- Kapak -->
+                    <img src="@Url.Content(string.IsNullOrWhiteSpace(w.CoverImagePath) ? "~/images/no-cover.png" : w.CoverImagePath)"
+                         class="card-img-top work-cover" alt="@w.Title" />
+
+                    <!-- Başlık -->
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@w.Title</h5>
+                    </div>
+
+                    <!-- Alt bilgi -->
+                    <div class="card-footer d-flex justify-content-between small text-muted">
+                        <span>@w.Category?.Name</span>
+                        <span>@w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
+                    </div>
+
+                    <!-- Aksiyonlar -->
+                    <div class="card-footer d-flex gap-2">
+                        <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
+                           class="btn btn-sm btn-outline-primary">Detay</a>
+
+                        <form asp-controller="Bookmarks" asp-action="Toggle" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="workId" value="@w.Id" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-bookmark-fill"></i> Kaldır
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

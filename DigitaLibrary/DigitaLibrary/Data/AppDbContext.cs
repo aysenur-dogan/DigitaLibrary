@@ -12,6 +12,8 @@ namespace DigitaLibrary.Data
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<PostLike> PostLikes => Set<PostLike>();
         public DbSet<PostSave> PostSaves => Set<PostSave>();
+        public DbSet<Favorite> Favorites => Set<Favorite>();
+        public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
 
         // Yeni:
         public DbSet<AcademicWork> AcademicWorks => Set<AcademicWork>();
@@ -19,6 +21,36 @@ namespace DigitaLibrary.Data
         protected override void OnModelCreating(ModelBuilder b)
         {
             base.OnModelCreating(b);
+            // Favorite: aynı kullanıcı aynı işi bir kez ekleyebilsin
+            b.Entity<Favorite>()
+                .HasIndex(x => new { x.UserId, x.AcademicWorkId })
+                .IsUnique();
+
+            b.Entity<Favorite>()
+                .HasOne(x => x.User).WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.Entity<Favorite>()
+                .HasOne(x => x.Work).WithMany()
+                .HasForeignKey(x => x.AcademicWorkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Bookmark: aynı kullanıcı aynı işi bir kez kaydedebilsin
+            b.Entity<Bookmark>()
+                .HasIndex(x => new { x.UserId, x.AcademicWorkId })
+                .IsUnique();
+
+            b.Entity<Bookmark>()
+                .HasOne(x => x.User).WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.Entity<Bookmark>()
+                .HasOne(x => x.Work).WithMany()
+                .HasForeignKey(x => x.AcademicWorkId)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
             b.Entity<Category>().HasIndex(x => x.Slug).IsUnique();
             b.Entity<Post>().HasIndex(x => x.Slug).IsUnique();

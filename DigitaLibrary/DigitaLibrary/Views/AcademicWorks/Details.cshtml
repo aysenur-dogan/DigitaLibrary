@@ -4,7 +4,22 @@
 }
 
 <div class="container py-3">
-    <h1 class="mb-3">@Model.Title</h1>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <h1 class="mb-0">@Model.Title</h1>
+
+        <!-- TTS Kontrolleri -->
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <select id="ttsRate" class="form-select form-select-sm" style="width:auto">
+                <option value="0.9">Hız: 0.9</option>
+                <option value="1" selected>Hız: 1.0</option>
+                <option value="1.15">Hız: 1.15</option>
+                <option value="1.3">Hız: 1.3</option>
+            </select>
+            <button id="ttsPlay" class="btn btn-sm btn-outline-secondary">🔊 Oynat</button>
+           @*  <button id="ttsPause" class="btn btn-sm btn-outline-secondary">⏸️ Duraklat</button>
+            <button id="ttsStop" class="btn btn-sm btn-outline-danger">⏹️ Durdur</button> *@
+        </div>
+    </div>
 
     @* Kapak *@
     @if (!string.IsNullOrWhiteSpace(Model.CoverImagePath))
@@ -33,23 +48,26 @@
         <span> • @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
     </div>
 
-    @* Özet *@
-    @if (!string.IsNullOrWhiteSpace(Model.Abstract))
-    {
-        <h5>Özet</h5>
-        <div style="white-space: pre-line; line-height:1.6">@Model.Abstract</div>
-        <hr />
-    }
+    <!-- OKUNACAK METIN ALANI -->
+    <div id="tts-source">
+        @* Özet *@
+        @if (!string.IsNullOrWhiteSpace(Model.Abstract))
+        {
+            <h5>Özet</h5>
+            <div style="white-space: pre-line; line-height:1.6">@Model.Abstract</div>
+            <hr />
+        }
 
-    @* Sitede Yazılan Metin *@
-    @if (!string.IsNullOrWhiteSpace(Model.HtmlContent))
-    {
-        <h5>Metin İçerik</h5>
-        <div style="white-space: pre-line; line-height:1.7">
-            @Model.HtmlContent
-        </div>
-        <hr />
-    }
+        @* Sitede Yazılan Metin *@
+        @if (!string.IsNullOrWhiteSpace(Model.HtmlContent))
+        {
+            <h5>Metin İçerik</h5>
+            <div style="white-space: pre-line; line-height:1.7">
+                @Model.HtmlContent
+            </div>
+            <hr />
+        }
+    </div>
 
     @* Dosya linki/önizleme *@
     @if (!string.IsNullOrWhiteSpace(Model.FilePath))
@@ -64,10 +82,142 @@
             </div>
         }
     }
-
-    <!-- 👇 Yeni eklenen butonlar -->
-    <div class="mt-4">
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">Düzenle</a>
-        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
-    </div>
 </div>
+
+@section Scripts {
+    <script>
+        (function(){
+          if (!("speechSynthesis" in window)) {
+            console.warn("Bu tarayıcıda metin okuma desteklenmiyor.");
+            return;
+          }
+
+          const synth    = window.speechSynthesis;
+          const $source  = document.getElementById("tts-source");
+          const $play    = document.getElementById("ttsPlay");
+          const $pause   = document.getElementById("ttsPause");
+          const $stop    = document.getElementById("ttsStop");
+          const $rateSel = document.getElementById("ttsRate");
+
+          let queue = [];          // Utterance kuyruğu (uzun metinler için)
+          let idx   = 0;           // Şu an okunan index
+          let playing = false;
+
+          function getReadableText(){
+            if (!$source) return "";
+            // Başlıkları da dahil etmek istersen: const h = "@Model.Title";
+            const text = $source.innerText || $source.textContent || "";
+            // gereksiz boşlukları toparla
+            return text.replace(/\s+\n/g, "\n").replace(/\n{2,}/g, "\n\n").trim();
+          }
+
+          // Uzun metinleri cümlelere bölüp 1–2k karakterlik paketler yapalım
+          function chunkText(txt, maxLen = 1600){
+            const sentences = txt.split(/(?<=[\.!\?…])\s+/); // cümle sonlarına göre
+            const chunks = [];
+            let buf = "";
+
+            for (const s of sentences){
+              if ((buf + " " + s).length <= maxLen) {
+                buf = buf ? (buf + " " + s) : s;
+              } else {
+                if (buf) chunks.push(buf);
+                if (s.length > maxLen) {
+                  // çok uzun tek cümleyi parçalara böl
+                  for (let i=0; i<s.length; i+=maxLen) {
+                    chunks.push(s.slice(i, i+maxLen));
+                  }
+                  buf = "";
+                } else {
+                  buf = s;
+                }
+              }
+            }
+            if (buf) chunks.push(buf);
+            return chunks;
+          }
+
+          function buildQueue(text){
+            const rate = parseFloat($rateSel?.value || "1") || 1;
+            const parts = chunkText(text);
+            queue = parts.map(p=>{
+              const u = new SpeechSynthesisUtterance(p);
+              u.lang  = "tr-TR";
+              u.rate  = rate;
+              u.pitch = 1;
+              u.onend = handleUtteranceEnd;
+              u.onerror = (e)=>console.error("TTS error:", e);
+              return u;
+            });
+            idx = 0;
+          }
+
+          function handleUtteranceEnd(){
+            idx++;
+            if (idx < queue.length) {
+              synth.speak(queue[idx]);
+            } else {
+              playing = false;
+              setPlayButton(false);
+            }
+          }
+
+          function setPlayButton(isPlaying){
+            if (!$play) return;
+            if (isPlaying){
+              $play.classList.remove("btn-outline-secondary");
+              $play.classList.add("btn-danger");
+              $play.textContent = "⏹️ Durdur";
+            } else {
+              $play.classList.remove("btn-danger");
+              $play.classList.add("btn-outline-secondary");
+              $play.textContent = "🔊 Oynat";
+            }
+          }
+
+          function start(){
+            const t = getReadableText();
+            if (!t) return;
+            synth.cancel(); // önceki her şeyi temizle
+            buildQueue(t);
+            if (!queue.length) return;
+            playing = true;
+            setPlayButton(true);
+            synth.speak(queue[idx]);
+          }
+
+          function stopAll(){
+            synth.cancel();
+            playing = false;
+            setPlayButton(false);
+          }
+
+          function pauseOrResume(){
+            if (!playing) return;
+            if (synth.paused) {
+              synth.resume();
+            } else {
+              synth.pause();
+            }
+          }
+
+          // Events
+          $play?.addEventListener("click", function(e){
+            e.preventDefault();
+            if (playing) { stopAll(); } else { start(); }
+          });
+          $pause?.addEventListener("click", function(e){
+            e.preventDefault();
+            pauseOrResume();
+          });
+          $stop?.addEventListener("click", function(e){
+            e.preventDefault();
+            stopAll();
+          });
+          $rateSel?.addEventListener("change", function(){
+            // hız değiştiyse yeniden başlatmak mantıklı
+            if (playing) { start(); }
+          });
+        })();
+    </script>
+}
