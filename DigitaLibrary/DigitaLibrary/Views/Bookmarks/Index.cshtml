@@ -3,47 +3,33 @@
     ViewData["Title"] = "Kaydedilenlerim";
 }
 
-<!-- Profildeki kart boyutu ve hizası için ufak CSS -->
 <style>
-    /* Kart: profil stili */
-    .work-card {
-        border-radius: 12px;
-        overflow: hidden;
-    }
-    /* Kapak resmi: sabit yükseklik + cover kırpma */
-    .work-cover {
-        width: 100%;
-        height: 180px;
-        object-fit: cover;
-        transition: transform .3s ease;
+    .card-top-link {
         display: block;
+        text-decoration: none;
+        color: inherit;
     }
+
+        .card-top-link .work-cover {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: transform .3s;
+            display: block;
+        }
 
     .work-card:hover .work-cover {
         transform: scale(1.05);
-    }
-
-    /* Gövde kompakt, başlık 2 satırda kırp */
-    .work-card .card-body {
-        padding: 10px 12px;
     }
 
     .work-card .card-title {
         font-size: .95rem;
         font-weight: 600;
         line-height: 1.3;
-        margin: 0;
         display: -webkit-box;
-        -webkit-line-clamp: 2; /* en fazla 2 satır */
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    /* Alt bilgi sıkı aralıklar */
-    .work-card .card-footer {
-        padding: 6px 12px;
-        font-size: .85rem;
     }
 </style>
 
@@ -51,7 +37,7 @@
 
 @if (!Model.Any())
 {
-    <div class="alert alert-info">Henüz kaydettiğiniz bir içerik yok.</div>
+    <div class="alert alert-info">Henüz kaydettiğiniz içerik yok.</div>
 }
 else
 {
@@ -61,14 +47,15 @@ else
             var w = b.Work!;
             <div class="col">
                 <div class="card h-100 shadow-sm work-card">
-                    <!-- Kapak -->
-                    <img src="@Url.Content(string.IsNullOrWhiteSpace(w.CoverImagePath) ? "~/images/no-cover.png" : w.CoverImagePath)"
-                         class="card-img-top work-cover" alt="@w.Title" />
-
-                    <!-- Başlık -->
-                    <div class="card-body text-center">
-                        <h5 class="card-title">@w.Title</h5>
-                    </div>
+                    <!-- ÜST BLOK: KAPAK + BAŞLIK = LİNK -->
+                    <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
+                       class="card-top-link">
+                        <img src="@Url.Content(string.IsNullOrWhiteSpace(w.CoverImagePath) ? "~/images/no-cover.png" : w.CoverImagePath)"
+                             class="card-img-top work-cover" alt="@w.Title" />
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-0">@w.Title</h5>
+                        </div>
+                    </a>
 
                     <!-- Alt bilgi -->
                     <div class="card-footer d-flex justify-content-between small text-muted">
@@ -78,8 +65,8 @@ else
 
                     <!-- Aksiyonlar -->
                     <div class="card-footer d-flex gap-2">
-                        <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
-                           class="btn btn-sm btn-outline-primary">Detay</a>
+                       @*  <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
+                           class="btn btn-sm btn-outline-primary">Detay</a> *@
 
                         <form asp-controller="Bookmarks" asp-action="Toggle" method="post" class="d-inline">
                             @Html.AntiForgeryToken()
