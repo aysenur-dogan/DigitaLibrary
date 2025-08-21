@@ -14,12 +14,14 @@ namespace DigitaLibrary.Data
         public DbSet<PostSave> PostSaves => Set<PostSave>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<Bookmark> Bookmarks => Set<Bookmark>();
+        public DbSet<UserRating> UserRatings { get; set; } = default!;
 
         // Yeni:
         public DbSet<AcademicWork> AcademicWorks => Set<AcademicWork>();
 
         protected override void OnModelCreating(ModelBuilder b)
         {
+
             base.OnModelCreating(b);
             // Favorite: aynı kullanıcı aynı işi bir kez ekleyebilsin
             b.Entity<Favorite>()
@@ -89,6 +91,20 @@ namespace DigitaLibrary.Data
                 new Category { Id = 7, Name = "Uygulamalı Bilimler", Slug = "uygulamali-bilimler" },
                 new Category { Id = 8, Name = "Diğer", Slug = "diger" }
             );
+            b.Entity<UserRating>(e =>
+            {
+                e.HasIndex(x => new { x.RaterId, x.RatedUserId }).IsUnique();
+
+                e.HasOne(x => x.Rater)
+                 .WithMany()
+                 .HasForeignKey(x => x.RaterId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+                e.HasOne(x => x.RatedUser)
+                 .WithMany()
+                 .HasForeignKey(x => x.RatedUserId)
+                 .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

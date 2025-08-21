@@ -66,8 +66,7 @@ namespace DigitaLibrary.Controllers
         [HttpGet("Profile/View/{id}")]
         public async Task<IActionResult> ViewProfile(string id)
         {
-            if (string.IsNullOrWhiteSpace(id))
-                return NotFound();
+            if (string.IsNullOrWhiteSpace(id)) return NotFound();
 
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
@@ -76,6 +75,26 @@ namespace DigitaLibrary.Controllers
                 .Where(x => x.AuthorId == id)
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
+
+            // ⭐ RATING EKLE
+            var avg = await _db.UserRatings
+                .Where(x => x.RatedUserId == id)
+                .AverageAsync(x => (double?)x.Score) ?? 0;
+
+            var cnt = await _db.UserRatings
+                .CountAsync(x => x.RatedUserId == id);
+
+            ViewBag.RatingAvg = Math.Round(avg, 2);
+            ViewBag.RatingCount = cnt;
+
+            var current = await _userManager.GetUserAsync(User);
+            DigitaLibrary.Models.UserRating? myVote = null;
+            if (current != null)
+            {
+                myVote = await _db.UserRatings
+                    .FirstOrDefaultAsync(x => x.RaterId == current.Id && x.RatedUserId == id);
+            }
+            ViewBag.MyVote = myVote;
 
             var vm = new ProfilePageViewModel
             {
@@ -88,6 +107,7 @@ namespace DigitaLibrary.Controllers
 
             return View("ViewProfile", vm);
         }
+
 
         // === PROFİL DÜZENLEME (GET) ===
         [HttpGet]
@@ -173,6 +193,17 @@ namespace DigitaLibrary.Controllers
                         ModelState.AddModelError(nameof(vm.Email), e.Description);
                     vm.AvatarPath = me.AvatarPath;
                     vm.CoverPath = me.CoverPath;
+                    // ⭐ RATING: kendi profilim için ortalama ve oy sayısı (form göstermeyeceğiz)
+                    var myAvg = await _db.UserRatings
+                        .Where(r => r.RatedUserId == me.Id)
+                        .AverageAsync(r => (double?)r.Score) ?? 0;
+
+                    var myCnt = await _db.UserRatings
+                        .CountAsync(r => r.RatedUserId == me.Id);
+
+                    ViewBag.RatingAvg = Math.Round(myAvg, 2);
+                    ViewBag.RatingCount = myCnt;
+
                     return View(vm);
                 }
             }
@@ -237,5 +268,6 @@ namespace DigitaLibrary.Controllers
 
             return View(works);
         }
+
     }
 }

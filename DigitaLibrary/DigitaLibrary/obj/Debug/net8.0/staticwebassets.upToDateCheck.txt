@@ -96,6 +96,8 @@ wwwroot\scss\_navs.scss
 wwwroot\scss\_utilities.scss
 wwwroot\scss\_variables.scss
 wwwroot\uploads\covers\3ad08f24d324490f95a30446a9f211a7.png
+wwwroot\uploads\covers\608fb17522b24122b0cd0597980459fa.png
+wwwroot\uploads\covers\a67a13270da0495188d95148130d210e.png
 wwwroot\uploads\covers\a7610f9ab0d34f159f3ebd8c320a2d00.png
 wwwroot\uploads\covers\c105f4164e2c4f3f99e96674467dd761.png
 wwwroot\uploads\covers\c531447d1e064417b5e5535719c50b7c.png
@@ -109,6 +111,7 @@ wwwroot\uploads\users\b832aff6-b928-4467-93f3-3f298a5fc50d\covers\d27b08ad46ab46
 wwwroot\uploads\users\b832aff6-b928-4467-93f3-3f298a5fc50d\covers\e3914a2ec81a47c5b81ef79afe9ecf04.png
 wwwroot\uploads\users\d048fbde-97d1-4adf-b4ee-7c4ba580e10c\avatars\4150ccc700da42ccae106dc8cf27785d.png
 wwwroot\uploads\users\f07cac67-e613-4e11-b06d-2f16cc836e4d\avatars\a8677004cb3a4359b86901b09ef6108c.png
+wwwroot\uploads\works\2025\5570d5bfda2843aaa9fb5e7f611df0c8.pdf
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.js
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.js.map
 wwwroot\vendor\bootstrap\js\bootstrap.bundle.min.js

@@ -64,6 +64,34 @@
 <div class="container py-4">
     <h2 class="mb-3">Son Çalışmalar</h2>
 
+    <!-- 🔎 Arama ve (varsa) kategori filtresi -->
+    <form method="get" class="row g-2 mb-3">
+        <div class="col-sm-8">
+            <input type="search" name="q" value="@(Context.Request.Query["q"])"
+                   class="form-control" placeholder="Başlık, yazar veya anahtar kelime ara...">
+        </div>
+
+        <!-- Kategori filtresi kullanıyorsan: ViewBag.Categories dolu ise -->
+        @if (ViewBag.Categories != null)
+        {
+            <div class="col-sm-3">
+                <select name="categoryId" class="form-select">
+                    <option value="">Tüm Kategoriler</option>
+                    @foreach (var c in (IEnumerable<DigitaLibrary.Models.Category>)ViewBag.Categories)
+                    {
+                        var selected = Context.Request.Query["categoryId"] == c.Id.ToString();
+                        <option value="@c.Id" selected="@(selected)">@c.Name</option>
+                    }
+                </select>
+            </div>
+        }
+
+        <div class="col-sm-1 d-grid">
+            <button class="btn btn-primary">Ara</button>
+        </div>
+    </form>
+
+
     @if (!Model.Any())
     {
         <div class="alert alert-info">Hiç çalışma bulunamadı.</div>

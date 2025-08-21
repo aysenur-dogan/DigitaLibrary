@@ -15,5 +15,8 @@ namespace DigitaLibrary.ViewModels
         public int TotalPosts { get; set; }
         public int PublishedPosts { get; set; }
         public int DraftPosts { get; set; }
+        public double AverageScore { get; set; }
+        public int RatingsCount { get; set; }
+
     }
 }

@@ -103,7 +103,32 @@
                     <input name="q" value='@Context.Request.Query["q"]'
                            class="form-control" placeholder="Ara: başlık, etiket, yazar..." />
                 </form>
-
+                <ul class="navbar-nav mb-0">
+                    <li class="nav-item">
+                        <a asp-controller="Home" asp-action="Index" class="nav-link d-flex align-items-center">
+                            <i class="bi bi-house me-1"></i> Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
+                           id="navbarCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-folder me-1"></i> Kategoriler
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCategories">
+                            @foreach (var cat in (IEnumerable<DigitaLibrary.Models.Category>)ViewBag.Categories ?? new List<DigitaLibrary.Models.Category>())
+                            {
+                                <li>
+                                    <a class="dropdown-item"
+                                       asp-controller="Home"
+                                       asp-action="Index"
+                                       asp-route-categoryId="@cat.Id">
+                                        @cat.Name
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </li>
+                </ul>
                 <!-- İkonlar + Yazılar -->
                 <ul class="navbar-nav flex-row align-items-center gap-3 me-3">
                     <li class="nav-item d-flex align-items-center">
@@ -141,32 +166,7 @@
                 </ul>
 
                 <!-- Sağ Menü -->
-                <ul class="navbar-nav mb-0">
-                    <li class="nav-item">
-                        <a asp-controller="Home" asp-action="Index" class="nav-link d-flex align-items-center">
-                            <i class="bi bi-house me-1"></i> Ana Sayfa
-                        </a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                           id="navbarCategories" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-folder me-1"></i> Kategoriler
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarCategories">
-                            @foreach (var cat in (IEnumerable<DigitaLibrary.Models.Category>)ViewBag.Categories ?? new List<DigitaLibrary.Models.Category>())
-                            {
-                                <li>
-                                    <a class="dropdown-item"
-                                       asp-controller="Home"
-                                       asp-action="Index"
-                                       asp-route-categoryId="@cat.Id">
-                                        @cat.Name
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </li>
-                </ul>
+                
             </div>
         </nav>
     </header>
