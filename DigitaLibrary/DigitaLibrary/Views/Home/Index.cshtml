@@ -132,10 +132,24 @@
                         </div>
 
                         <!-- Yazar + Beğen/Kaydet -->
-                        <div class="card-footer d-flex justify-content-between align-items-center">
-                            <div class="text-muted small">
+                        <div class="text-muted small">
+                            @if (!string.IsNullOrEmpty(w.AuthorId))
+                            {
+                                <a asp-controller="Profile"
+                                   asp-action="ViewProfile"
+                                   asp-route-id="@w.AuthorId"
+                                   class="text-decoration-none">
+                                    @w.Author?.DisplayName
+                                </a>
+                            }
+                            else
+                            {
                                 @w.Author?.DisplayName
-                            </div>
+                            }
+                        </div>
+
+
+
 
                             <div class="d-flex gap-3 align-items-center">
 
@@ -175,7 +189,7 @@
                         </div>
 
                     </div>
-                </div>
+			
             }
         </div>
     }

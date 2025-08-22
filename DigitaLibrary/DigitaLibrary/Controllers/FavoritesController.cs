@@ -28,7 +28,10 @@ namespace DigitaLibrary.Controllers
 
             var list = await _db.Favorites
                 .Where(f => f.UserId == me.Id)
-                .Include(f => f.Work)!.ThenInclude(w => w.Category)
+                .Include(f => f.Work)!
+                    .ThenInclude(w => w.Author)   // 👈 yazar bilgisini dahil et
+                .Include(f => f.Work)!
+                    .ThenInclude(w => w.Category)
                 .OrderByDescending(f => f.Id)
                 .ToListAsync();
 
@@ -47,13 +50,22 @@ namespace DigitaLibrary.Controllers
                 .FirstOrDefaultAsync(f => f.UserId == me.Id && f.AcademicWorkId == workId);
 
             if (existing == null)
+            {
                 _db.Favorites.Add(new Favorite { UserId = me.Id, AcademicWorkId = workId });
+            }
             else
+            {
                 _db.Favorites.Remove(existing);
+            }
 
             await _db.SaveChangesAsync();
 
-            return Redirect(Request.Headers["Referer"].ToString() ?? Url.Action("Index", "Home")!);
+            // Güvenli geri dönüş
+            var referer = Request.Headers["Referer"].ToString();
+            if (!string.IsNullOrWhiteSpace(referer))
+                return Redirect(referer);
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

@@ -58,25 +58,42 @@ else
                         </div>
                     </a>
 
-                    <!-- Alt bilgi (linkin DIŞINDA) -->
+                    <!-- Alt bilgi -->
                     <div class="card-footer d-flex justify-content-between small text-muted">
                         <span>@w.Category?.Name</span>
                         <span>@w.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")</span>
                     </div>
 
-                    <!-- Aksiyonlar (linkin DIŞINDA; butonlar tıklanabilir kalır) -->
-                    <div class="card-footer d-flex gap-2">
-                       @*  <a asp-controller="AcademicWorks" asp-action="Details" asp-route-slug="@w.Slug"
-                           class="btn btn-sm btn-outline-primary">Detay</a> *@
+                    <!-- Yazar + Aksiyonlar -->
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div class="text-muted small">
+                            @if (!string.IsNullOrEmpty(w.AuthorId))
+                            {
+                                <a asp-controller="Profile"
+                                   asp-action="ViewProfile"
+                                   asp-route-id="@w.AuthorId"
+                                   class="text-decoration-none">
+                                    @w.Author?.DisplayName
+                                </a>
+                            }
+                            else
+                            {
+                                @w.Author?.DisplayName
+                            }
+                        </div>
 
-                        <form asp-controller="Favorites" asp-action="Toggle" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="workId" value="@w.Id" />
-                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                <i class="bi bi-heart-fill"></i> Kaldır
-                            </button>
-                        </form>
+
+                        <div class="d-flex gap-2">
+                            <form asp-controller="Favorites" asp-action="Toggle" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="workId" value="@w.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-heart-fill"></i> Kaldır
+                                </button>
+                            </form>
+                        </div>
                     </div>
+
                 </div>
             </div>
         }

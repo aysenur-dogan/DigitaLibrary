@@ -55,13 +55,15 @@ namespace DigitaLibrary.Controllers
                 TotalPosts = posts.Count,
                 PublishedPosts = posts.Count(p => p.IsPublished),
                 DraftPosts = posts.Count(p => !p.IsPublished),
-                MyWorks = myWorks
+                MyWorks = myWorks,
+                 IsOwner = true
             };
 
             return View(vm);
         }
 
         // === BAŞKA BİR KULLANICININ PROFİLİNİ GÖRÜNTÜLE ===
+        // ProfileController.cs
         [AllowAnonymous]
         [HttpGet("Profile/View/{id}")]
         public async Task<IActionResult> ViewProfile(string id)
@@ -71,30 +73,12 @@ namespace DigitaLibrary.Controllers
             var user = await _userManager.FindByIdAsync(id);
             if (user == null) return NotFound();
 
+            var viewer = await _userManager.GetUserAsync(User);
+
             var works = await _db.AcademicWorks
                 .Where(x => x.AuthorId == id)
                 .OrderByDescending(x => x.CreatedAt)
                 .ToListAsync();
-
-            // ⭐ RATING EKLE
-            var avg = await _db.UserRatings
-                .Where(x => x.RatedUserId == id)
-                .AverageAsync(x => (double?)x.Score) ?? 0;
-
-            var cnt = await _db.UserRatings
-                .CountAsync(x => x.RatedUserId == id);
-
-            ViewBag.RatingAvg = Math.Round(avg, 2);
-            ViewBag.RatingCount = cnt;
-
-            var current = await _userManager.GetUserAsync(User);
-            DigitaLibrary.Models.UserRating? myVote = null;
-            if (current != null)
-            {
-                myVote = await _db.UserRatings
-                    .FirstOrDefaultAsync(x => x.RaterId == current.Id && x.RatedUserId == id);
-            }
-            ViewBag.MyVote = myVote;
 
             var vm = new ProfilePageViewModel
             {
@@ -102,10 +86,11 @@ namespace DigitaLibrary.Controllers
                 MyWorks = works,
                 TotalPosts = 0,
                 PublishedPosts = 0,
-                DraftPosts = 0
+                DraftPosts = 0,
+                IsOwner = (viewer?.Id == id)        // 👈 SAHİBİ Mİ?
             };
 
-            return View("ViewProfile", vm);
+            return View("Me", vm);                  // 👈 Aynı, şık profil sayfası
         }
 
 

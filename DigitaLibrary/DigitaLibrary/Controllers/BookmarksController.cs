@@ -28,6 +28,8 @@ namespace DigitaLibrary.Controllers
 
             var list = await _db.Bookmarks
                 .Where(b => b.UserId == me.Id)
+                 .Include(x => x.Work)
+        .ThenInclude(w => w.Author)
                 .Include(b => b.Work)!.ThenInclude(w => w.Category)
                 .OrderByDescending(b => b.Id)
                 .ToListAsync();

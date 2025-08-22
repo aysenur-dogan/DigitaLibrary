@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DigitaLibrary")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9ee247f043c0a74a3de2baf15be697a1b896ee06")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+21101c5a3305ea5c1d53e9431fbb3989383f691b")]
 [assembly: System.Reflection.AssemblyProductAttribute("DigitaLibrary")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DigitaLibrary")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
