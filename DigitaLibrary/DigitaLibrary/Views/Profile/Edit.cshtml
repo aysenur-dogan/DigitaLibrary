@@ -22,7 +22,8 @@
             <div class="col-lg-6">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Biyografi</label>
-                    <textarea asp-for="Bio" class="form-control" rows="3" placeholder="Kullanıcı biyografisi girilmemiştir."></textarea>
+                    <!-- CKEditor bağlanan alan -->
+                    <textarea id="bioEditor" asp-for="Bio" class="form-control" rows="3" placeholder="Kullanıcı biyografisi girilmemiştir."></textarea>
                     <span asp-validation-for="Bio" class="text-danger small"></span>
                 </div>
 
@@ -59,9 +60,10 @@
                     <div class="col-12">
                         <label asp-for="UserName" class="form-label">Kullanıcı Adı</label>
                         <div class="input-group">
-                            <span class="input-group-text">@@</span>
+                            <span class="input-group-text">&#64;</span>
                             <input asp-for="UserName" class="form-control" />
                         </div>
+
                         <span asp-validation-for="UserName" class="text-danger small"></span>
                     </div>
                     
@@ -131,7 +133,44 @@
 </div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
+
+    <!-- CKEditor 5 super-build (Bio alanı için) -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/super-build/ckeditor.js"></script>
+    <script>
+        (function () {
+            const el = document.getElementById('bioEditor');
+            if (!el || !window.CKEDITOR || !CKEDITOR.ClassicEditor) return;
+
+            CKEDITOR.ClassicEditor.create(el, {
+                toolbar: {
+                    items: [
+                        'heading','|','bold','italic','underline','strikethrough',
+                        'fontSize','fontFamily','fontColor','fontBackgroundColor','|',
+                        'alignment','|','bulletedList','numberedList','outdent','indent','|',
+                        'link','blockQuote','horizontalLine','|','undo','redo'
+                    ]
+                },
+                language: { ui: 'tr', content: 'tr' },
+                fontSize: { options: [10,12,14,'default',18,24,32,48], supportAllValues: true },
+                fontFamily: {
+                    options: [
+                        'default',
+                        'Arial, Helvetica, sans-serif',
+                        'Times New Roman, Times, serif',
+                        'Georgia, serif',
+                        'Courier New, Courier, monospace'
+                    ]
+                },
+                removePlugins: [
+                    'CKBox','CKFinder','EasyImage',
+                    'RealTimeCollaborativeComments','RealTimeCollaborativeTrackChanges','RealTimeCollaborativeRevisionHistory',
+                    'PresenceList','Comments','TrackChanges','TrackChangesData','RevisionHistory',
+                    'WProofreader','Pagination','ExportPdf','ExportWord','MathType',
+                    'SlashCommand','Template','DocumentOutline','FormatPainter','TableOfContents','PasteFromOfficeEnhanced','CloudServices'
+                ],
+                placeholder: 'Kullanıcı biyografisini yazın…'
+            }).catch(err => console.error('CKEditor init error:', err));
+        })();
+    </script>
 }

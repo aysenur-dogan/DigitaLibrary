@@ -53,5 +53,6 @@ namespace DigitaLibrary.ViewModels
 
         [Display(Name = "Kapak Resmi")]
         public IFormFile? CoverImage { get; set; }
+        public int Id { get; set; }
     }
 }

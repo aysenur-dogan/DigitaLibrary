@@ -34,7 +34,9 @@
             }
             @if (!string.IsNullOrWhiteSpace(Model.User.Bio))
             {
-                <p class="mt-2">@Model.User.Bio</p>
+                <p class="mt-2">
+                    @Html.Raw(Model.User.Bio)
+                </p>
             }
         </div>
     </div>

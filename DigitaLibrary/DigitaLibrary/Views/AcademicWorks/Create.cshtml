@@ -1,8 +1,7 @@
 ﻿@model DigitaLibrary.ViewModels.AcademicWorkCreateVm
-@using DigitaLibrary.Models
 @{
     ViewData["Title"] = "Akademik Çalışma Ekle";
-    var categories = ViewBag.Categories as IEnumerable<Category>;
+    var categories = ViewBag.Categories as IEnumerable<DigitaLibrary.Models.Category>;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -12,14 +11,15 @@
 
     <div class="mb-3">
         <label asp-for="Title" class="form-label">Başlık</label>
-        <input asp-for="Title" class="form-control" placeholder="Çalışmanızın başlığı" />
+        <input asp-for="Title" class="form-control" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
+    <!-- Yazar / Kurum / Yıl -->
     <div class="row g-2">
         <div class="col-md-6">
             <label asp-for="Authors" class="form-label">Yazar(lar)</label>
-            <input asp-for="Authors" class="form-control" placeholder="Ad Soyad, Ad Soyad" />
+            <input asp-for="Authors" class="form-control" />
         </div>
         <div class="col-md-3">
             <label asp-for="Institution" class="form-label">Kurum</label>
@@ -30,48 +30,14 @@
             <input asp-for="Year" class="form-control" />
         </div>
     </div>
-
-    <div class="row g-2 mt-2">
-        <div class="col-md-4">
-            <label asp-for="AuthorTitle" class="form-label">Yazar Unvanı</label>
-            <input asp-for="AuthorTitle" class="form-control" placeholder="Örn: Prof. Dr., Öğrenci" />
-        </div>
-        <div class="col-md-4">
-            <label asp-for="Supervisor" class="form-label">Danışman</label>
-            <input asp-for="Supervisor" class="form-control" />
-        </div>
-        <div class="col-md-4">
-            <label class="form-label">Kategori</label>
-            <select asp-for="CategoryId" class="form-select"
-                    asp-items="@(new SelectList(categories ?? Enumerable.Empty<Category>(), "Id", "Name"))">
-                <option value="">—</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="row g-2 mt-2">
-        <div class="col-md-6">
-            <label asp-for="PublicationType" class="form-label">Yayın Türü</label>
-            <select asp-for="PublicationType" class="form-select"
-                    asp-items="Html.GetEnumSelectList<PublicationType>()"></select>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="Language" class="form-label">Dil</label>
-            <select asp-for="Language" class="form-select"
-                    asp-items="Html.GetEnumSelectList<WorkLanguage>()"></select>
-        </div>
-    </div>
-
+    <!-- Özet -->
     <div class="mb-3 mt-2">
-        <label asp-for="Keywords" class="form-label">Anahtar Kelimeler</label>
-        <input asp-for="Keywords" class="form-control" placeholder="virgülle ayırın" />
-    </div>
-
-    <div class="mb-3">
         <label asp-for="Abstract" class="form-label">Özet</label>
         <textarea asp-for="Abstract" class="form-control" rows="4"></textarea>
         <span asp-validation-for="Abstract" class="text-danger"></span>
     </div>
+
+    <!-- Kategori -->
     <div class="mb-3">
         <label asp-for="CategoryId" class="form-label">Kategori</label>
         <select asp-for="CategoryId"
@@ -82,7 +48,14 @@
         <span asp-validation-for="CategoryId" class="text-danger"></span>
     </div>
 
-    <div class="mb-2">
+    <!-- Anahtar Kelimeler -->
+    <div class="mb-3">
+        <label asp-for="Keywords" class="form-label">Anahtar Kelimeler</label>
+        <input asp-for="Keywords" class="form-control" placeholder="Örn: yapay zeka, eğitim, makine öğrenmesi" />
+        <span asp-validation-for="Keywords" class="text-danger"></span>
+    </div>
+    <!-- İçerik Türü -->
+    <div class="mb-2 mt-3">
         <label class="form-label d-block">İçerik Türü</label>
         <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" asp-for="ContentMode" value="FileOnly" id="m1" checked>
@@ -98,43 +71,59 @@
         </div>
     </div>
 
+    <!-- Dosya alanı -->
     <div id="file-area" class="mb-3">
-        <label asp-for="File" class="form-label">PDF veya DOCX</label>
+        <label asp-for="File" class="form-label">PDF/DOCX Dosya</label>
         <input asp-for="File" type="file" class="form-control" />
-        <small class="text-muted">PDF/DOCX, ≤20MB</small>
         <span asp-validation-for="File" class="text-danger"></span>
     </div>
 
-    <div id="text-area" class="mb-3" style="display:none;">
+    <!-- Metin alanı -->
+    <div id="text-area" class="mb-3">
         <label asp-for="HtmlContent" class="form-label">Sitede Yaz (Zengin Metin)</label>
-        <textarea asp-for="HtmlContent" class="form-control" rows="10"></textarea>
+        <textarea asp-for="HtmlContent" id="HtmlContent" class="form-control" rows="10"></textarea>
         <span asp-validation-for="HtmlContent" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
         <label asp-for="CoverImage" class="form-label">Kapak Resmi</label>
         <input asp-for="CoverImage" type="file" class="form-control" accept="image/*" />
-        <small class="text-muted">JPG/PNG/WEBP/GIF</small>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Slug" class="form-label">Slug (URL)</label>
-        <input asp-for="Slug" class="form-control" placeholder="boşsa başlıktan üretilecek" />
     </div>
 
     <button type="submit" class="btn btn-primary">Kaydet</button>
     <a asp-action="Index" class="btn btn-secondary">Liste</a>
+  
+
 </form>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.0.0/classic/ckeditor.js"></script>
     <script>
-        function syncAreas(){
-          const v = document.querySelector('input[name="ContentMode"]:checked')?.value;
-          document.getElementById('file-area').style.display = (v==='TextOnly') ? 'none' : '';
-          document.getElementById('text-area').style.display = (v==='FileOnly') ? 'none' : '';
+        let editorInstance = null;
+
+        function mountEditor() {
+            if (editorInstance) return;
+            ClassicEditor.create(document.getElementById('HtmlContent'))
+                .then(ed => editorInstance = ed)
+                .catch(console.error);
         }
-        document.querySelectorAll('input[name="ContentMode"]').forEach(r=>r.addEventListener('change',syncAreas));
-        syncAreas();
+
+        function destroyEditor() {
+            if (!editorInstance) return;
+            editorInstance.destroy().then(() => { editorInstance = null; });
+        }
+
+        function syncAreas() {
+            const mode = document.querySelector('input[name="ContentMode"]:checked')?.value;
+            document.getElementById('file-area').style.display = (mode === 'TextOnly') ? 'none' : '';
+            document.getElementById('text-area').style.display = (mode === 'FileOnly') ? 'none' : '';
+            if (mode === 'FileOnly') destroyEditor(); else mountEditor();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            syncAreas();
+            document.querySelectorAll('input[name="ContentMode"]').forEach(r => r.addEventListener('change', syncAreas));
+        });
     </script>
 }

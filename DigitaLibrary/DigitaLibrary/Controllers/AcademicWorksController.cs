@@ -15,7 +15,7 @@ namespace DigitaLibrary.Controllers
     public class AcademicWorksController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly UserManager<Admin> _user;
+        private readonly UserManager<Admin> _userManager;
         private readonly IWebHostEnvironment _env;
 
         private const long MaxBytes = 20 * 1024 * 1024; // 20MB
@@ -27,8 +27,35 @@ namespace DigitaLibrary.Controllers
             "image/jpeg","image/png","image/webp","image/gif"
         };
 
-        public AcademicWorksController(AppDbContext db, UserManager<Admin> user, IWebHostEnvironment env)
-        { _db = db; _user = user; _env = env; }
+        public AcademicWorksController(AppDbContext db, UserManager<Admin> userManager, IWebHostEnvironment env)
+        {
+            _db = db;
+            _userManager = userManager;
+            _env = env;
+        }
+
+        // === Silme ===
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var me = await _userManager.GetUserAsync(User);
+            if (me == null) return Unauthorized();
+
+            var work = await _db.AcademicWorks.FirstOrDefaultAsync(x => x.Id == id);
+            if (work == null) return NotFound();
+
+            // sadece sahibi veya admin silebilir
+            var canDelete = work.AuthorId == me.Id || User.IsInRole("Admin");
+            if (!canDelete) return Forbid();
+
+            _db.AcademicWorks.Remove(work);
+            await _db.SaveChangesAsync();
+
+            TempData["ok"] = "Çalışma silindi.";
+            return RedirectToAction("Me", "Profile", new { hash = "#myitems" });
+        }
 
         // Liste
         [AllowAnonymous]
@@ -54,7 +81,7 @@ namespace DigitaLibrary.Controllers
             return w == null ? NotFound() : View(w);
         }
 
-        // Ekle (GET)
+        // === Ekle (GET) ===
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -62,20 +89,20 @@ namespace DigitaLibrary.Controllers
             return View(new AcademicWorkCreateVm());
         }
 
-        // Ekle (POST)
+        // === Ekle (POST) ===
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AcademicWorkCreateVm vm)
         {
-            var me = await _user.GetUserAsync(User);
+            var me = await _userManager.GetUserAsync(User);
             if (me == null) return Challenge();
 
-            // "en az bir içerik" kuralı
+            // içerik doğrulama
             if (vm.ContentMode == ContentMode.FileOnly && (vm.File == null || vm.File.Length == 0))
                 ModelState.AddModelError(nameof(vm.File), "Dosya yükleyin veya içerik türünü değiştirin.");
             if (vm.ContentMode == ContentMode.TextOnly && string.IsNullOrWhiteSpace(vm.HtmlContent))
                 ModelState.AddModelError(nameof(vm.HtmlContent), "Metin içeriği girin veya içerik türünü değiştirin.");
 
-            // Dosya doğrulama
+            // dosya doğrulama
             if (vm.File is { Length: > 0 })
             {
                 if (!AllowedDocMime.Contains(vm.File.ContentType))
@@ -84,7 +111,7 @@ namespace DigitaLibrary.Controllers
                     ModelState.AddModelError(nameof(vm.File), "Dosya boyutu 20MB'ı aşamaz.");
             }
 
-            // Kapak resmi doğrulama
+            // kapak resmi doğrulama
             if (vm.CoverImage is { Length: > 0 } && !AllowedImageMime.Contains(vm.CoverImage.ContentType))
                 ModelState.AddModelError(nameof(vm.CoverImage), "Kapak resmi için JPG/PNG/WEBP/GIF kullanın.");
 
@@ -94,7 +121,7 @@ namespace DigitaLibrary.Controllers
                 return View(vm);
             }
 
-            // Slug
+            // slug
             var slug = Slugify(string.IsNullOrWhiteSpace(vm.Slug) ? vm.Title : vm.Slug);
             slug = await MakeUniqueSlug(slug);
 
@@ -116,7 +143,7 @@ namespace DigitaLibrary.Controllers
                 fileSize = vm.File.Length;
             }
 
-            // Kapak kaydet
+            // kapak kaydet
             string? coverPath = null;
             if (vm.CoverImage is { Length: > 0 })
             {
@@ -131,9 +158,6 @@ namespace DigitaLibrary.Controllers
                 coverPath = $"/uploads/covers/{name}";
             }
 
-            // (İsteğe bağlı) HTML sanitize – paket ekleyince aktif edersin
-            string? cleanHtml = string.IsNullOrWhiteSpace(vm.HtmlContent) ? null : vm.HtmlContent;
-
             var a = new AcademicWork
             {
                 Title = vm.Title.Trim(),
@@ -146,11 +170,11 @@ namespace DigitaLibrary.Controllers
                 Keywords = vm.Keywords?.Trim(),
                 PublicationType = vm.PublicationType,
                 Language = vm.Language,
-                Abstract = vm.Abstract.Trim(),
+                Abstract = vm.Abstract?.Trim(),
                 CategoryId = vm.CategoryId,
                 AuthorId = me.Id,
                 ContentMode = vm.ContentMode,
-                HtmlContent = cleanHtml,
+                HtmlContent = vm.HtmlContent,
                 FilePath = filePath,
                 FileType = fileMime,
                 FileSize = fileSize,
@@ -164,28 +188,7 @@ namespace DigitaLibrary.Controllers
             return RedirectToAction(nameof(Details), new { slug = a.Slug });
         }
 
-        // === helpers ===
-        private static string Slugify(string input)
-        {
-            input = input.Trim().ToLowerInvariant()
-                .Replace("ğ", "g").Replace("ü", "u").Replace("ş", "s")
-                .Replace("ı", "i").Replace("ö", "o").Replace("ç", "c");
-            input = Regex.Replace(input, @"[^a-z0-9\s-]", "");
-            input = Regex.Replace(input, @"\s+", "-");
-            input = Regex.Replace(input, @"-+", "-");
-            return input.Trim('-');
-        }
-
-        private async Task<string> MakeUniqueSlug(string slug)
-        {
-            var baseSlug = slug; var n = 1;
-            while (await _db.AcademicWorks.AnyAsync(x => x.Slug == slug))
-                slug = $"{baseSlug}-{++n}";
-            return slug;
-
-        }
-        // Düzenle (GET)
-        // Düzenle (GET)
+        // === Düzenle (GET) ===
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -214,7 +217,7 @@ namespace DigitaLibrary.Controllers
             return View(vm);
         }
 
-        // Düzenle (POST)
+        // === Düzenle (POST) ===
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AcademicWorkCreateVm vm)
         {
@@ -227,11 +230,11 @@ namespace DigitaLibrary.Controllers
                 return View(vm);
             }
 
-            // Slug güncelle (boş değilse)
+            // slug güncelle
             if (!string.IsNullOrWhiteSpace(vm.Slug))
                 work.Slug = vm.Slug.Trim();
 
-            // Metin alanlarını güncelle
+            // metin alanları
             work.Title = vm.Title.Trim();
             work.Authors = vm.Authors?.Trim();
             work.AuthorTitle = vm.AuthorTitle?.Trim();
@@ -241,16 +244,15 @@ namespace DigitaLibrary.Controllers
             work.Keywords = vm.Keywords?.Trim();
             work.PublicationType = vm.PublicationType;
             work.Language = vm.Language;
-            work.Abstract = vm.Abstract.Trim();
+            work.Abstract = vm.Abstract?.Trim();
             work.CategoryId = vm.CategoryId;
             work.ContentMode = vm.ContentMode;
             work.HtmlContent = vm.HtmlContent?.Trim();
             work.UpdatedAt = DateTime.UtcNow;
 
-            // === Dosya güncelle ===
+            // dosya güncelle
             if (vm.File is { Length: > 0 })
             {
-                // Eski dosyayı sil
                 if (!string.IsNullOrWhiteSpace(work.FilePath))
                 {
                     var oldPath = Path.Combine(_env.WebRootPath, work.FilePath.TrimStart('/'));
@@ -272,7 +274,7 @@ namespace DigitaLibrary.Controllers
                 work.FileSize = vm.File.Length;
             }
 
-            // === Kapak güncelle ===
+            // kapak güncelle
             if (vm.CoverImage is { Length: > 0 })
             {
                 if (!string.IsNullOrWhiteSpace(work.CoverImagePath))
@@ -297,6 +299,24 @@ namespace DigitaLibrary.Controllers
             return RedirectToAction(nameof(Details), new { slug = work.Slug });
         }
 
+        // === Helpers ===
+        private static string Slugify(string input)
+        {
+            input = input.Trim().ToLowerInvariant()
+                .Replace("ğ", "g").Replace("ü", "u").Replace("ş", "s")
+                .Replace("ı", "i").Replace("ö", "o").Replace("ç", "c");
+            input = Regex.Replace(input, @"[^a-z0-9\s-]", "");
+            input = Regex.Replace(input, @"\s+", "-");
+            input = Regex.Replace(input, @"-+", "-");
+            return input.Trim('-');
+        }
 
+        private async Task<string> MakeUniqueSlug(string slug)
+        {
+            var baseSlug = slug; var n = 1;
+            while (await _db.AcademicWorks.AnyAsync(x => x.Slug == slug))
+                slug = $"{baseSlug}-{++n}";
+            return slug;
+        }
     }
 }
